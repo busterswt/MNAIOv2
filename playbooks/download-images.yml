@@ -1,0 +1,52 @@
+---
+# Copyright 2022, Rackspace US, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in witing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: Grab images and do the needful
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  any_errors_fatal: true
+  vars_files:
+    - vars/main.yml
+  tasks:
+    - name: Create images directory
+      ansible.builtin.file:
+        path: "{{ playbook_dir }}/../images/"
+        state: directory
+        mode: '0755'
+
+    - name: Check for existence of local images
+      ansible.builtin.stat:
+        path: "{{ playbook_dir }}/../images/{{ item.value.filename }}"
+      loop: "{{ lookup('dict', images) }}"
+      register: file_stat_var
+
+    - name: Download images to local directory, if doesn't exist
+      ansible.builtin.get_url:
+        url: "{{ item.item.value.url }}"
+        dest: "{{ playbook_dir }}/../images/"
+        checksum: "sha256:{{ item.item.value.sha256 }}"
+        mode: '0440'
+      loop: "{{ file_stat_var.results }}"
+      when: not item.stat.exists
+
+    - name: Drop Terraform image file
+      template:
+        src: "tf/050-image.tf.j2"
+        dest: "{{ playbook_dir }}/../terraform/050-image.tf"
+        mode: "0644"
+      vars:
+        - image: "{{ images[osa_vm_image] }}"          
+

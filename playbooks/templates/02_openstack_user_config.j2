@@ -1,0 +1,127 @@
+---
+############################################################
+# 01_openstack_user_config.yml
+#
+# Scenario: Open vSwitch
+#
+# 3x controllers
+# 2x haproxy
+# 3x computes
+#
+############################################################
+
+cidr_networks:
+  container: 172.25.1.0/24
+  tunnel: 172.25.2.0/24
+
+used_ips:
+  - "172.25.1.0,172.25.1.99"
+  - "172.25.2.0,172.25.2.99"
+
+global_overrides:
+  internal_lb_vip_address: "{{ internal_lb_vip_address }}"
+  external_lb_vip_address: "{{ external_lb_vip_address }}"
+{% if osa_no_containers | bool %}
+  no_containers: True
+{% endif %}
+  tunnel_bridge: "br-overlay"
+  management_bridge: "br-mgmt"
+  provider_networks:
+    - network:
+        container_bridge: "br-mgmt"
+        container_type: "veth"
+        container_interface: "eth1"
+        ip_from_q: "container"
+        type: "raw"
+        group_binds:
+          - all_containers
+          - hosts
+        is_container_address: true
+        is_ssh_address: true
+    - network:
+        container_bridge: "br-overlay"
+        ip_from_q: "tunnel"
+        type: "vxlan"
+        range: "1:1000"
+        net_name: "vxlan"
+        group_binds:
+          - neutron_openvswitch_agent
+    - network:
+        container_bridge: "br-provider"
+        container_type: "veth"
+        container_interface: "eth12"
+        network_interface: "ens5"
+        type: "flat"
+        net_name: "flat"
+        group_binds:
+          - neutron_openvswitch_agent
+    - network:
+        container_bridge: "br-storage"
+        container_type: "veth"
+        container_interface: "eth2"
+        ip_from_q: "storage"
+        type: "raw"
+        group_binds:
+          - glance_api
+          - cinder_api
+          - cinder_volume
+          - nova_compute
+
+###
+### Anchors
+###
+{% if osa_enable_compute | bool %}
+compute_block: &compute_block
+{%   for host in groups['compute_hosts'] %}
+  {{ hostvars[host]['server_hostname'] }}:
+    ip: {{ hostvars[host]['fixed_ip'] }}
+    container_vars:
+      container_tech: "{{ default_container_tech }}"
+{%   endfor %}
+{% endif %}
+
+
+controller_block: &controller_block
+{% for host in groups['controller_hosts'] %}
+  {{ hostvars[host]['server_hostname'] }}:
+    ip: {{ hostvars[host]['fixed_ip'] }}
+    container_vars:
+      container_tech: "{{ default_container_tech }}"
+{% endfor %}
+
+
+loadbalancer_block: &loadbalancer_block
+{% for host in groups['loadbalancer_hosts'] %}
+  {{ hostvars[host]['server_hostname'] }}:
+    ip: {{ hostvars[host]['fixed_ip'] }}
+    container_vars:
+      container_tech: "{{ default_container_tech }}"
+{% endfor %}
+
+
+###
+### Infrastructure
+###
+
+{% if osa_enable_infra | bool %}
+# galera, memcache, rabbitmq, utility
+shared-infra_hosts: *controller_block
+identity_hosts: *controller_block
+
+image_hosts: *controller_block
+
+placement-infra_hosts: *controller_block
+compute-infra_hosts: *controller_block
+
+compute_hosts: *compute_block
+
+orchestration_hosts: *controller_block
+dashboard_hosts: *controller_block
+network_hosts: *controller_block
+
+# repository (apt cache, python packages, etc)
+repo-infra_hosts: *controller_block
+
+# load balancer
+haproxy_hosts: *controller_block
+{% endif %}

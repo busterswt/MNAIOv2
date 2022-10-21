@@ -1,0 +1,59 @@
+---
+# Copyright 2017, Rackspace US, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in witing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+mnaio_host_required_distro_packages:
+  - ubuntu-cloud-keyring
+
+mnaio_host_package_repos:
+  - repo: "deb http://ubuntu-cloud.archive.canonical.com/ubuntu {{ ansible_lsb.codename }}-updates/xena main"
+    state: present
+    filename: "uca"
+    condition: "{{ ansible_lsb.codename == 'focal' }}"
+
+mnaio_host_distro_packages:
+  - bridge-utils
+  - ifenslave
+  - iptables-persistent
+  - libguestfs-tools
+  - libvirt-daemon-system
+  - libvirt-clients
+  - lvm2
+  - ntp
+  - openssh-server
+  - python3
+  - python3-lxml
+  - python3-jmespath
+  - qemu-kvm
+  - qemu-utils
+  - software-properties-common
+  - virtinst
+  - virt-manager
+  - vlan
+
+mnaio_pxe_distro_packages:
+  - tftpd-hpa
+  - inetutils-inetd
+  - nginx
+  - p7zip-full
+
+mnaio_dhcp_distro_packages:
+  - isc-dhcp-server
+
+mnaio_pkg_cache_server_distro_packages:
+  - apt-cacher-ng
+
+mnaio_host_iptables_service: netfilter-persistent
+
+ssh_service_name: ssh

@@ -1,0 +1,55 @@
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+      ens3:
+        dhcp4: true
+        mtu: 1500
+        match:
+          macaddress: 00:30:18:08:03:f0
+      ens4:
+          dhcp4: no
+          mtu: 9000
+  vlans:
+      vlan5:
+          addresses: [ 172.22.0.51/24 ]
+          accept-ra: no
+          id: 5
+          link: ens160
+          mtu: 9000
+      vlan20:
+          accept-ra: no
+          id: 20
+          link: ens160
+          mtu: 1500
+      vlan21:
+          accept-ra: no
+          id: 21
+          link: ens160
+          mtu: 9000
+      vlan22:
+          accept-ra: no
+          id: 22
+          link: ens192
+          mtu: 9000
+  bridges:
+      br-mgmt:
+          addresses: [ 10.20.0.30/24 ]
+          interfaces: [ vlan20 ]
+          routes:
+              - to: default
+                via: 10.20.0.1
+          nameservers:
+              search: [local]
+              addresses: [172.22.0.5]
+      br-overlay:
+          addresses: [ 10.21.0.30/24 ]
+          interfaces: [ vlan21 ]
+          mtu: 9000
+      br-storage:
+          addresses: [ 10.22.0.30/24 ]
+          interfaces: [ vlan22 ]
+          mtu: 9000
+      lxcbr0:
+          addresses: [ 10.0.3.1/24 ]
+          interfaces: []

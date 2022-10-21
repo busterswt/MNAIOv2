@@ -1,0 +1,10 @@
+resource "openstack_images_image_v2" "osa-mnaio-image" {
+  name             = "{{ image.name }}"
+  local_file_path  = "{{ playbook_dir }}/../images/{{ image.filename }}"
+  container_format = "{{ image.container_format }}"
+  disk_format      = "{{ image.disk_format }}"
+
+  properties = {
+    key = "value"
+  }
+}

@@ -1,0 +1,102 @@
+---
+# Copyright 2022, Rackspace US, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in witing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: Add SSH keys to VM's and containers
+  hosts: all
+  gather_facts: false
+  any_errors_fatal: true
+  become: true
+  tasks:
+    - name: Copy Host SSH Keys
+      copy:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        mode: "0600"
+      with_items:
+        - src: "{{ playbook_dir }}/../id_rsa_mnaio.key"
+          dest: /root/.ssh/id_rsa
+      register: copied
+      retries: 3
+      delay: 10
+      until: not copied.failed
+
+- name: Set MaxSessions and MaxStartups to reduce connection failures
+  hosts: all
+  gather_facts: "{{ gather_facts | default(true) }}"
+  environment: "{{ deployment_environment_variables | default({}) }}"
+  become: true
+  tasks:
+    - name: Gather variables for each operating system
+      include_vars: "{{ item }}"
+      with_first_found:
+        - "{{ playbook_dir }}/vars/{{ ansible_distribution | lower }}-{{ ansible_distribution_version | lower }}.yml"
+        - "{{ playbook_dir }}/vars/{{ ansible_distribution | lower }}-{{ ansible_distribution_major_version | lower }}.yml"
+        - "{{ playbook_dir }}/vars/{{ ansible_os_family | lower }}-{{ ansible_distribution_major_version | lower }}.yml"
+        - "{{ playbook_dir }}/vars/{{ ansible_distribution | lower }}.yml"
+        - "{{ playbook_dir }}/vars/{{ ansible_os_family | lower }}.yml"
+      tags:
+        - always
+
+    - name: Set MaxStartups
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        line: MaxStartups 100
+        state: present
+        regexp: '^MaxStartups.*$'
+      notify:
+        - restart sshd
+
+    - name: Set MaxSessions
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        line: MaxSessions 100
+        state: present
+        regexp: '^MaxSessions.*$'
+      notify:
+        - restart sshd
+
+  handlers:
+    - name: restart sshd
+      service:
+        name: "{{ ssh_service_name }}"
+        state: restarted
+
+- name: Configure networking
+  hosts: all
+  gather_facts: false
+  any_errors_fatal: true
+  become: true
+  tasks:
+    - name: Drop bridge templates on non-infra
+      blockinfile:
+        path: /etc/netplan/50-cloud-init.yaml
+        block: "{{ lookup('file', '{{ playbook_dir }}/templates/netplan/100-bridges-noninfra.yaml.j2') }}"
+      notify:
+        - apply netplan
+      when:
+        - ('controller_hosts' in group_names) or ('compute_hosts' in group_names)
+
+    - name: Drop bridge templates on infra
+      blockinfile:
+        path: /etc/netplan/50-cloud-init.yaml
+        block: "{{ lookup('file', '{{ playbook_dir }}/templates/netplan/100-bridges-infra.yaml.j2') }}"
+      notify:
+        - apply netplan
+      when:
+        - ('deploy_hosts' in group_names) or ('loadbalancer_hosts' in group_names)
+
+  handlers:
+    - name: apply netplan
+      command: "netplan apply"

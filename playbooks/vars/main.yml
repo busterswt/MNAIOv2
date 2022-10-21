@@ -1,0 +1,37 @@
+---
+#### Common ####
+osa_branch: master
+osa_no_containers: True
+osa_apply_security_hardening: false
+osa_vm_image: focal
+
+#### Images ####
+images:
+  jammy:
+    name: osa-mnaio-ubuntu-jammy
+    filename: jammy-server-cloudimg-amd64.img
+    container_format: bare
+    disk_format: qcow2
+    url: https://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-amd64.img
+    sha256: a59705df98048a4513ca5bff18c0c705d7dacffeadb089d670379880dc3aac58
+  focal:
+    name: osa-mnaio-ubuntu-focal
+    filename: focal-server-cloudimg-amd64.img
+    container_format: bare
+    disk_format: qcow2
+    url: https://cloud-images.ubuntu.com/focal/current/focal-server-cloudimg-amd64.img
+    sha256: 1bf86f40534c7c4c5491bbc8064bf1b0764da8c88d5a12edce0f442bc3055784
+
+#### Networking ####
+# Neutron plugin choice are: ml2.ovn,ml2.ovs
+osa_neutron_plugin: ml2.ovn
+
+#### Keepalived/HAproxy ####
+internal_lb_vip_address: 172.25.1.10
+external_lb_vip_address: 172.25.1.11
+
+#### Less Common ####
+default_container_tech: lxc
+osa_enable_infra: True
+osa_enable_compute: True
+

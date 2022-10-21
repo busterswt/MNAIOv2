@@ -1,0 +1,41 @@
+############################### OSA MNAIO HOSTS ###############################
+
+[all:vars]
+ansible_ssh_user=ubuntu
+ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+ansible_ssh_private_key_file=${ keypath }
+
+[all]
+%{ for index, key in deployer_nodes ~}
+${ index }     ansible_host=${ key.address } fixed_ip=${ key.fixed_ip }
+%{ endfor ~}
+%{ for index, key in controller_nodes ~}
+${ index }     ansible_host=${ key.address } fixed_ip=${ key.fixed_ip }
+%{ endfor ~}
+%{ for index, key in compute_nodes ~}
+${ index }     ansible_host=${ key.address } fixed_ip=${ key.fixed_ip }
+%{ endfor ~}
+%{ for index, key in loadbalancer_nodes ~}
+${ index }     ansible_host=${ key.address } fixed_ip=${ key.fixed_ip }
+%{ endfor ~}
+
+[deploy_hosts]
+%{ for index, key in deployer_nodes ~}
+${ index }
+%{ endfor ~}
+
+[controller_hosts]
+%{ for index, key in controller_nodes ~}
+${ index }
+%{ endfor ~}
+
+[compute_hosts]
+%{ for index, key in compute_nodes ~}
+${ index }
+%{ endfor ~}
+
+[loadbalancer_hosts]
+%{ for index, key in loadbalancer_nodes ~}
+${ index }
+%{ endfor ~}
+

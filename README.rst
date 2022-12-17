@@ -9,11 +9,13 @@ About this repository
 
 This is not your grandma's MNAIO.
 
-Full OpenStack deployment using an **existing** OpenStack-based cloud.
-This is a multi-node installation using instances that are deployed using
-Terraform and managed by Ansible.
+In fact, it's not really an all-in-one at all.
 
-The environment consists of the following:
+MNAIOv2 provides a full OpenStack deployment using an **existing**
+OpenStack-based cloud. This is a multi-node installation using instances
+that are deployed using Terraform and managed by Ansible.
+
+The deployed environment consists of the following:
 
 - 1x Deploy Node (4 vCPUs, 4 GB RAM, 20 GB Disk)
 - 2x Load Balancers (4 vCPUs, 4 GB RAM, 20 GB Disk)

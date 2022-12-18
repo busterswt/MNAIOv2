@@ -5,7 +5,7 @@
 # via Floating IPs. Same for deployed VMs (at some point).
 
 resource "openstack_networking_router_v2" "mnaio-mgmt-router" {
-  name                = var.management_router.name
+  name                = "${join("-",["${random_pet.pet_name.id}","${var.management_router.name}"])}"
   admin_state_up      = true
   external_network_id = var.external_network["uuid"]
   enable_snat         = true
@@ -16,7 +16,7 @@ resource "openstack_networking_router_v2" "mnaio-mgmt-router" {
 # and accessed once the cloud is deployed.
 
 resource "openstack_networking_router_v2" "mnaio-overcloud-router" {
-  name                = var.overcloud_router.name
+  name                = "${join("-",["${random_pet.pet_name.id}","${var.overcloud_router.name}"])}"
   admin_state_up      = true
   external_network_id = var.external_network["uuid"]
   enable_snat         = true
@@ -28,11 +28,11 @@ resource "openstack_networking_router_v2" "mnaio-overcloud-router" {
 # to be terminated on the Firepower.
 
 resource "openstack_networking_network_v2" "mnaio-management" {
-  name = "mnaio-management"
+  name = "${join("-",["${random_pet.pet_name.id}","mnaio-management"])}"
 }
 
 resource "openstack_networking_subnet_v2" "mnaio-management" {
-  name            = var.network_management["subnet_name"]
+  name            = "${join("-",["${random_pet.pet_name.id}","${var.network_management["subnet_name"]}"])}"
   network_id      = openstack_networking_network_v2.mnaio-management.id
   cidr            = var.network_management["cidr"]
   dns_nameservers = var.dns_ip

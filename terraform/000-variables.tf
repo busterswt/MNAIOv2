@@ -10,7 +10,7 @@ variable "image" {
 #### NEUTRON ####
 variable "external_network" {
   type    = map(string)
-  description = "The NAME and UUID of an External Provider Network for Floating IPs."
+  description = "The NAME and UUID of an External Provider Network for Floating IPs (dict)."
 }
 
 #######################################
@@ -72,7 +72,7 @@ variable "overcloud_router" {
 
 #### VM controller parameters ####
 
-# The provider IP is a dummy block that will not be used.
+# The provider addr is a dummy block that will not be used.
 
 locals {
  controller_nodes = {
@@ -115,3 +115,13 @@ locals {
     mnaio-deploy1 = { mgmt_addr = "172.25.1.51" }
   }
 }
+
+#### Resources ####
+
+resource "random_pet" "pet_name" {
+  length = 2
+}
+
+#output "pet_name" {
+#  value = random_pet.pet_name.id
+#}

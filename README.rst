@@ -49,17 +49,30 @@ with the following commands (Ubuntu 20.04):
 
 .. code-block:: bash
 
+    Ubuntu 20.04 LTS
+    ----------------
     sudo apt install python3-pip
     sudo pip3 install ansible-core==2.13.5
     ansible-galaxy collection install -r requirements.yml
 
-Install Teraform:
+    MacOS X (Homebrew)
+    ------------------
+    brew install ansible
+    ansible-galaxy collection install -r requirements.yml
+
+Install Terraform:
 
 .. code-block:: bash
 
+    Ubuntu 20.04 LTS
+    ----------------
     curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
     sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
     sudo apt-get update && sudo apt-get install terraform=1.3.6
+
+    MacOS X (Homebrew)
+    ------------------
+    brew install terraform
 
 Overrides
 ---------

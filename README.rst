@@ -13,7 +13,8 @@ In fact, it's not really an all-in-one at all.
 
 MNAIOv2 provides a full OpenStack deployment using an **existing**
 OpenStack-based cloud, resulting in a multi-node installation using instances
-that are deployed using Terraform and managed by Ansible.
+that are deployed using Terraform and managed by Ansible. So, less TripleO
+and more TripleOSA.
 
 The deployed environment consists of the following:
 

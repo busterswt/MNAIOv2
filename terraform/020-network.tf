@@ -38,7 +38,7 @@ resource "openstack_networking_subnet_v2" "mnaio-management" {
   dns_nameservers = var.dns_ip
 }
 
-# Create a router and attacn to the MNAIO management network
+# Create a router and attach to the MNAIO management network
 
 resource "openstack_networking_router_interface_v2" "router_interface_mgmt" {
   router_id = "${openstack_networking_router_v2.mnaio-mgmt-router.id}"

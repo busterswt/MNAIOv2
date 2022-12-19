@@ -36,9 +36,9 @@ export TF_VAR_image=${MNAIO_OSA_VM_IMAGE:-"focal"}
 #### THE GOODS ####
 ###################
 
-pushd terraform
-terraform init
-popd
+#pushd terraform
+#terraform init
+#popd
 
 # This playbook downloads images to the local machine for later uploading to Glance
 ansible-playbook playbooks/download-images.yml \

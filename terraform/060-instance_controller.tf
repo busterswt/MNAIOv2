@@ -9,6 +9,7 @@ resource "openstack_compute_instance_v2" "controller" {
   flavor_id   = openstack_compute_flavor_v2.osa-mnaio-controller-flavor.id
   key_pair    = openstack_compute_keypair_v2.user_key.name
   user_data   = file("scripts/cloud-init.yaml")
+  config_drive = true
   network {
     port = openstack_networking_port_v2.controller-mgmt[each.key].id
   }
@@ -77,4 +78,6 @@ resource "openstack_compute_floatingip_associate_v2" "controller_fip_associate_m
   instance_id     = openstack_compute_instance_v2.controller[each.key].id
   floating_ip     = "${openstack_networking_floatingip_v2.controller_floating_ip_mgmt[each.key].address}"
   fixed_ip        = "${openstack_compute_instance_v2.controller[each.key].network.0.fixed_ip_v4}"
+
+  depends_on = [ openstack_networking_router_interface_v2.router_interface_mgmt ]
 }

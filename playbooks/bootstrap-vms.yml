@@ -97,6 +97,18 @@
       when:
         - ('deploy_hosts' in group_names) or ('loadbalancer_hosts' in group_names)
 
+    - name: Update MACAddressPolicy to none (for Ubuntu 22.04)
+      community.general.ini_file:
+        path: /usr/lib/systemd/network/99-default.link
+        section: Link
+        option: MACAddressPolicy
+        value: none
+        backup: true
+      notify:
+        - apply netplan
+      when:
+        - ('22.04' in ansible_distribution_version)
+
   handlers:
     - name: apply netplan
       command: "netplan apply"

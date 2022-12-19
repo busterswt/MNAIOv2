@@ -46,8 +46,10 @@ ansible-playbook playbooks/download-images.yml \
 
 # This playbook deploys VMs onto an existing OpenStack cloud using Terraform
 # We run it twice due to missing inventory the first time
-ansible-playbook playbooks/deploy-vms.yml
-ansible-playbook -i playbooks/inventory/hosts playbooks/deploy-vms.yml
+ansible-playbook playbooks/deploy-vms.yml \
+   -e osa_vm_image=${MNAIO_OSA_VM_IMAGE:-"focal"}
+ansible-playbook -i playbooks/inventory/hosts playbooks/deploy-vms.yml \
+   -e osa_vm_image=${MNAIO_OSA_VM_IMAGE:-"focal"}
 
 # This playbook bootstraps the VMs (networking, keys, etc)
 ansible-playbook -i playbooks/inventory/hosts playbooks/bootstrap-vms.yml
@@ -55,4 +57,5 @@ ansible-playbook -i playbooks/inventory/hosts playbooks/bootstrap-vms.yml
 # This playbook bootstraps OpenStack-Ansible onto deployed VMs
 ansible-playbook -i playbooks/inventory/hosts playbooks/deploy-osa.yml \
    -e osa_neutron_plugin=${MNAIO_OSA_NEUTRON_PLUGIN:-"ml2.ovs"} \
-   -e osa_branch=${MNAIO_OSA_BRANCH:-"master"}
+   -e osa_branch=${MNAIO_OSA_BRANCH:-"master"} \
+   -e osa_no_containers=${MNAIO_OSA_NO_CONTAINERS:-"true"}

@@ -122,6 +122,9 @@ Set the Neutron plugin (options: ml2.ovs,ml2.ovn)
 Set the instance image type (options: focal,jammy)
   ``export MNAIO_OSA_VM_IMAGE="${MNAIO_OSA_VM_IMAGE:-focal}"``
 
+Set the deployment to metal versus containers
+  ``export MNAIO_OSA_NO_CONTAINERS="${MNAIO_OSA_NO_CONTAINERS:-true}"``
+
 Architecture
 ============
 

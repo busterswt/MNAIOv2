@@ -10,8 +10,8 @@ resource "local_file" "ansible_inventory" {
   )
   filename = "${path.module}/../playbooks/inventory/hosts"
   
-  depends_on = [ openstack_networking_floatingip_v2.controller_floating_ip_mgmt,
-                 openstack_networking_floatingip_v2.compute_floating_ip_mgmt,
-                 openstack_networking_floatingip_v2.loadbalancer_floating_ip_mgmt,
-                 openstack_networking_floatingip_v2.deployer_floating_ip_mgmt ]
+  depends_on = [ openstack_compute_floatingip_associate_v2.controller_fip_associate_mgmt,
+                 openstack_compute_floatingip_associate_v2.compute_fip_associate_mgmt,
+                 openstack_compute_floatingip_associate_v2.loadbalancer_fip_associate_mgmt,
+                 openstack_compute_floatingip_associate_v2.deployer_fip_associate_mgmt ]
 }

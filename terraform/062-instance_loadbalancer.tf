@@ -3,7 +3,7 @@
 # Create instance
 resource "openstack_compute_instance_v2" "loadbalancer" {
   for_each    = local.loadbalancer_nodes
-  name        = each.key
+  name        = "${join("-",["${random_pet.pet_name.id}","${each.key}"])}"
   image_name  = var.image
   flavor_id   = openstack_compute_flavor_v2.osa-mnaio-loadbalancer-flavor.id
   key_pair    = openstack_compute_keypair_v2.user_key.name

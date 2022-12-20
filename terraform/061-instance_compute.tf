@@ -25,7 +25,7 @@ resource "openstack_compute_instance_v2" "compute" {
 # Create network port
 resource "openstack_networking_port_v2" "compute-mgmt" {
   for_each       = local.compute_nodes
-  name           = ""${join("-",["${random_pet.pet_name.id}","compute","${each.key}"])}""
+  name           = "${join("-",["${random_pet.pet_name.id}","mgmt","${each.key}"])}"
   network_id     = openstack_networking_network_v2.mnaio-management.id
   admin_state_up = true
   security_group_ids = [
@@ -40,7 +40,7 @@ resource "openstack_networking_port_v2" "compute-mgmt" {
 
 resource "openstack_networking_port_v2" "compute-overlay" {
   for_each       = local.compute_nodes
-  name           = "port-compute-${each.key}"
+  name           = "${join("-",["${random_pet.pet_name.id}","overlay","${each.key}"])}"
   network_id     = openstack_networking_network_v2.mnaio-overlay.id
   admin_state_up = true
   security_group_ids = [
@@ -55,7 +55,7 @@ resource "openstack_networking_port_v2" "compute-overlay" {
 
 resource "openstack_networking_port_v2" "compute-provider" {
   for_each       = local.compute_nodes
-  name           = "port-compute-${each.key}"
+  name           = "${join("-",["${random_pet.pet_name.id}","provider","${each.key}"])}"
   network_id     = openstack_networking_network_v2.mnaio-provider-ext.id
   admin_state_up = true
   no_security_groups = true

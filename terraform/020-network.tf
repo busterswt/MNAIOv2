@@ -55,7 +55,7 @@ resource "openstack_networking_network_v2" "mnaio-overlay" {
 #### MNAIO OVERLAY SUBNET ####
 
 resource "openstack_networking_subnet_v2" "mnaio-overlay" {
-  name            = var.network_overlay["subnet_name"]
+  name            = "${join("-",["${random_pet.pet_name.id}","${var.network_overlay["subnet_name"]}"])}"
   network_id      = openstack_networking_network_v2.mnaio-overlay.id
   cidr            = var.network_overlay["cidr"]
   dns_nameservers = var.dns_ip
@@ -74,7 +74,7 @@ resource "openstack_networking_network_v2" "mnaio-provider-ext" {
 }
 
 resource "openstack_networking_subnet_v2" "mnaio-provider-ext" {
-  name            = var.network_provider["subnet_name"]
+  name            = "${join("-",["${random_pet.pet_name.id}","${var.network_provider["subnet_name"]}"])}"
   network_id      = openstack_networking_network_v2.mnaio-provider-ext.id
   cidr            = var.network_provider["cidr"]
   no_gateway      = true

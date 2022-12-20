@@ -19,7 +19,7 @@ resource "openstack_compute_instance_v2" "deployer" {
 # Create network port
 resource "openstack_networking_port_v2" "deployer-mgmt" {
   for_each       = local.deployer_nodes
-  name           = "${join("-",["${random_pet.pet_name.id}","deploy","${each.key}"])}"
+  name           = "${join("-",["${random_pet.pet_name.id}","mgmt","${each.key}"])}"
   network_id     = openstack_networking_network_v2.mnaio-management.id
   admin_state_up = true
   no_security_groups = true

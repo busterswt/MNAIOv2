@@ -25,11 +25,11 @@ resource "openstack_compute_instance_v2" "compute" {
 # Create network port
 resource "openstack_networking_port_v2" "compute-mgmt" {
   for_each       = local.compute_nodes
-  name           = "port-compute-${each.key}"
+  name           = ""${join("-",["${random_pet.pet_name.id}","compute","${each.key}"])}""
   network_id     = openstack_networking_network_v2.mnaio-management.id
   admin_state_up = true
   security_group_ids = [
-    openstack_networking_secgroup_v2.secgrp_ovn_lab.id
+    openstack_networking_secgroup_v2.secgrp-mnaio.id
   ]
   mac_address = each.value.mgmt_mac
   fixed_ip {
@@ -44,7 +44,7 @@ resource "openstack_networking_port_v2" "compute-overlay" {
   network_id     = openstack_networking_network_v2.mnaio-overlay.id
   admin_state_up = true
   security_group_ids = [
-    openstack_networking_secgroup_v2.secgrp_ovn_lab.id
+    openstack_networking_secgroup_v2.secgrp-mnaio.id
   ]
   mac_address = each.value.overlay_mac
   fixed_ip {

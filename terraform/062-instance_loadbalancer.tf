@@ -1,4 +1,4 @@
-#### LOADBALANCERSS ####
+#### LOADBALANCERS ####
 
 # Create instance
 resource "openstack_compute_instance_v2" "loadbalancer" {
@@ -19,7 +19,7 @@ resource "openstack_compute_instance_v2" "loadbalancer" {
 # Create network port
 resource "openstack_networking_port_v2" "loadbalancer-mgmt" {
   for_each       = local.loadbalancer_nodes
-  name           = "port-loadbalancer-${each.key}"
+  name           = "${join("-",["${random_pet.pet_name.id}","lb","${each.key}"])}"
   network_id     = openstack_networking_network_v2.mnaio-management.id
   admin_state_up = true
   no_security_groups = true

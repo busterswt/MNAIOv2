@@ -14,10 +14,12 @@
 cidr_networks:
   container: 172.25.1.0/24
   tunnel: 172.25.2.0/24
+  storage: 172.25.4.0/24
 
 used_ips:
   - "172.25.1.0,172.25.1.99"
   - "172.25.2.0,172.25.2.99"
+  - "172.25.4.0,172.25.4.99"
 
 global_overrides:
   internal_lb_vip_address: "{{ internal_lb_vip_address }}"

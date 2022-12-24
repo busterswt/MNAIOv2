@@ -147,28 +147,6 @@
       when:
         - pre_config_osa | default(true) | bool
 
-#    - name: Drop NEUTRON OVN env.d config#
-#      template:
-#        src: "neutron-ovn-envd.j2"
-#        dest: "/etc/openstack_deploy/env.d/neutron.yml"
-#        mode: "0644"
-#        owner: root
-#        group: root
-#      when:
-#        - pre_config_osa | default(true) | bool
-#        - osa_neutron_plugin == "ml2.ovn"
-
-#    - name: Drop NOVA OVN env.d config
-#      template:
-#        src: "nova-ovn-envd.j2"
-#        dest: "/etc/openstack_deploy/env.d/nova.yml"
-#        mode: "0644"
-#        owner: root
-#        group: root
-#      when:
-#        - pre_config_osa | default(true) | bool
-#        - osa_neutron_plugin == "ml2.ovn"
-
     - name: Ensure the user_variables file is populated
       lineinfile:
         path: /etc/openstack_deploy/user_variables.yml

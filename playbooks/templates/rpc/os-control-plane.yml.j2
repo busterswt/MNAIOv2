@@ -1,0 +1,80 @@
+---
+
+# Define haproxy service hosts independent from
+# Openstack service hosts
+haproxy_hosts: &infra_hosts
+{% for host in groups['loadbalancer_hosts'] %}
+  {{ hostvars[host]['inventory_hostname'] }}:
+    ip: {{ hostvars[host].fixed_ip }}
+    no_containers: true
+{% endfor %}
+
+# jd come back to this, pick first haproxy node
+#log_hosts:
+#  infra1:
+#    ip: 10.240.0.41
+#    no_containers: true
+
+# Define Openstack services hosts on a shared
+# 3 hosts design
+controller_hosts: &controller_hosts
+{% for host in groups['controller_hosts'] %}
+  {{ hostvars[host]['inventory_hostname'] }}:
+    ip: {{ hostvars[host]['fixed_ip'] }}
+    no_containers: true
+    container_vars:
+      nova_virt_type: ironic
+{% endfor %}
+
+repo-infra_hosts:
+  *controller_hosts
+
+shared-infra_hosts:
+  *controller_hosts
+
+os-infra_hosts:
+  *controller_hosts
+
+identity_hosts:
+  *controller_hosts
+
+storage-infra_hosts:
+  *controller_hosts
+
+placement-infra_hosts:
+  *controller_hosts
+
+database_hosts:
+  *controller_hosts
+
+image_hosts:
+  *controller_hosts
+
+compute-infra_hosts:
+  *controller_hosts
+
+orchestration_hosts:
+  *controller_hosts
+
+dashboard_hosts:
+  *controller_hosts
+
+ironic-infra_hosts:
+  *controller_hosts
+
+# Disabled until tested with OVS
+#ironic-inspector_hosts:
+#  *controller_hosts
+
+ironic-compute_hosts:
+  *controller_hosts
+
+dnsaas_hosts:
+  *controller_hosts
+
+octavia-infra_hosts:
+  *controller_hosts
+
+# Add neutron to existing control plane hosts
+network_hosts:
+  *controller_hosts

@@ -108,6 +108,25 @@ Set the Neutron external provider network name (from undercloud)
 Set the Neutron external provider network uuid (from undercloud)
   ``export MNAIO_OSA_EXTERNAL_NETWORK_UUID="<openstack external provider network uuid>"``
 
+A `clouds.yaml` file is also required for authentication.
+
+Example:
+
+.. code-block:: bash
+
+  clouds:
+    openstack:
+      auth:
+        auth_url: https://openstack.cloud.com:5000
+        username: "admin"
+        password: "wme7rr72vs&"
+        project_id: 7a8df96a3c6a47118e60e57aa9ecff54
+        project_name: "admin"
+        user_domain_name: "Default"
+      region_name: "RegionOne"
+      interface: "public"
+      identity_api_version: 3
+
 Optional
 ^^^^^^^^
 
@@ -226,3 +245,32 @@ To SSH to the deploy node, use the private key. Attach to the existing tmux sess
     root@mnaio-deploy1:/home/ubuntu# tmux attach
 
 Changes to the deployment can be made in ``/etc/openstack_deploy``, and playbooks exist in ``/opt/openstack-ansible``.
+
+Rackspace Private Cloud
+=======================
+
+MNAIOv2 can deploy a Rackspace Private Cloud environment based on OpenStack-Ansible but
+using custom templates. This method requires access to certain private GitHub repos and
+a slighty different workflow.
+
+Set the deployment method from `osa` to `rpc` and run the `build.sh` scripts from the MNAIOv2
+directory:
+
+.. code-block:: bash
+
+    export MNAIO_DEPLOY=rpc
+    bash build.sh
+
+Once complete, login to the deploy node and run the RPC scripts:
+
+xxxx
+
+Come back to the deploy node and run the `setup-rpc.yml` playbook:
+
+xxxx
+
+That's it!
+:
+
+    
+

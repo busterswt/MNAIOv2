@@ -34,4 +34,3 @@ external_lb_vip_address: 172.25.1.11
 default_container_tech: lxc
 osa_enable_infra: True
 osa_enable_compute: True
-

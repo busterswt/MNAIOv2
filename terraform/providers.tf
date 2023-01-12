@@ -29,11 +29,8 @@ required_version = ">= 0.14.0"
   }
 }
 
-# The 'password' argument for the provider is ommitted in favor of OS_PASSWORD environment variable.
-# The 'user_name' argument for the provider is ommitted in favor of OS_USERNAME environment variable.
-# The 'tenant_name' argument for the provider is ommitted in favor of OS_TENANT_NAME or OS_PROJECT_NAME environment variables.
-# The 'auth_url' argument for the provider is ommitted in favor of OS_AUTH_URL environment variable.
+# The OpenStack provider is using clouds.yaml.
 
 provider "openstack" {
+  cloud = "openstack"
 }
-

@@ -13,14 +13,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -u
+#set -u
 
 source ansible-env.rc
 
-# Destroy the Terraform environment
+# Terraform relies on the clouds.yaml for authentication.
 
-pushd terraform
-TF_VAR_image=dummy \
-TF_VAR_external_network='{"name":"dummy","uuid":"dummy"}' \
-terraform destroy
-popd
+###################
+#### THE GOODS ####
+###################
+
+if [ "$MNAIO_DEPLOY" == "rpc" ]; then
+    # This playbook sets up Rackspace Private Cloud (OSA) onto deployed VMs
+    ansible-playbook -i playbooks/inventory/hosts playbooks/setup-rpc.yml \
+      -e osa_neutron_plugin=${MNAIO_OSA_NEUTRON_PLUGIN:-"ml2.ovs"} \
+      -e osa_branch=${MNAIO_OSA_BRANCH:-"master"} \
+      -e osa_no_containers=${MNAIO_OSA_NO_CONTAINERS:-"true"}
+else
+    echo "ERROR: This script requires an RPC deployment"
+    exit 1
+fi

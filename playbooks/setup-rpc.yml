@@ -13,7 +13,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Setup deploy host
+- name: Update hosts
+  hosts: all
+  gather_facts: true
+  become: true
+  vars_files:
+  - vars/main.yml
+  tasks:
+    - name: Ensure host entries for API endpoints
+      lineinfile:
+        path: /etc/hosts
+        regexp: '^{{ item }}'
+        line: '{{ item }}'
+        create: yes
+      with_items:
+        - '172.25.1.11 internalapi.rsprivatecloud.net'
+        - '172.25.1.10 publicapi.rsprivatecloud.net'
+
+- name: Setup RPC Deployment
   hosts: deploy_hosts
   gather_facts: true
   environment: "{{ deployment_environment_variables | default({}) }}"
@@ -37,24 +54,46 @@
       tags:
         - always
 
-    - name: Get OSA
-      git:
-        repo: "{{ osa_repo | default('https://opendev.org/openstack/openstack-ansible') }}"
-        dest: /opt/openstack-ansible
-        version: "{{ osa_branch | default('master') }}"
-      when:
-        - pre_config_osa | default(true) | bool
-        - clone_osa | default(true) | bool
-
-    - name: Create OSA configuration directory
+    - name: Remove os-storage (temporary)
       file:
-        path: "/etc/openstack_deploy"
-        state: directory
-        owner: "root"
-        group: "root"
-        mode: "0755"
+        path: "/etc/openstack_deploy/conf.d/os-storage.yml"
+        state: absent
       when:
         - pre_config_osa | default(true) | bool
+
+    - name: Remove inventory (temporary)
+      file:
+        path: "/etc/openstack_deploy/openstack_inventory.json"
+        state: absent
+      when:
+        - pre_config_osa | default(true) | bool
+
+    - name: Drop compute config
+      template:
+        src: "rpc/os-computes.yml.j2"
+        dest: /etc/openstack_deploy/conf.d/os-computes.yml
+        mode: "0644"
+        owner: root
+        group: root
+
+#    - debug: var=hostvars[item]
+#      with_items: "{{groups['loadbalancer_hosts']}}"
+
+    - name: Drop control plane config
+      template:
+        src: "rpc/os-control-plane.yml.j2"
+        dest: /etc/openstack_deploy/conf.d/os-control-plane.yml
+        mode: "0644"
+        owner: root
+        group: root
+
+    - name: Drop osa user variables
+      template:
+        src: "rpc/user_local_variables.yml.j2"
+        dest: /etc/openstack_deploy/user_local_variables.yml
+        mode: "0644"
+        owner: root
+        group: root
 
     - name: Create OSA group_vars directory
       file:
@@ -66,77 +105,6 @@
       when:
         - pre_config_osa | default(true) | bool
 
-    - name: Copy default config files and directories
-      shell: >-
-        rsync
-        -av
-        --include='*.yml'
-        --include='*/'
-        --exclude='*'
-        /opt/openstack-ansible/etc/openstack_deploy/
-        /etc/openstack_deploy/
-      args:
-        executable: /bin/bash
-        chdir: /opt/openstack-ansible
-        warn: no
-      when:
-        - pre_config_osa | default(true) | bool
-
-    - name: Drop osa config (OVN)
-      template:
-        src: "01_openstack_user_config.j2"
-        dest: /etc/openstack_deploy/openstack_user_config.yml
-        mode: "0644"
-        owner: root
-        group: root
-      when:
-        - pre_config_osa | default(true) | bool
-        - osa_neutron_plugin == "ml2.ovn"
-
-    - name: Drop osa config (OVS)
-      template:
-        src: "02_openstack_user_config.j2"
-        dest: /etc/openstack_deploy/openstack_user_config.yml
-        mode: "0644"
-        owner: root
-        group: root
-      when:
-        - pre_config_osa | default(true) | bool
-        - osa_neutron_plugin == "ml2.ovs"
-
-    - name: Drop osa user variables (OVN)
-      template:
-        src: "01_user_mnaio_variables.j2"
-        dest: /etc/openstack_deploy/user_mnaio_variables.yml
-        mode: "0644"
-        owner: root
-        group: root
-      when:
-        - pre_config_osa | default(true) | bool
-        - osa_neutron_plugin == "ml2.ovn"
-
-    - name: Drop osa user variables (OVS)
-      template:
-        src: "02_user_mnaio_variables.j2"
-        dest: /etc/openstack_deploy/user_mnaio_variables.yml
-        mode: "0644"
-        owner: root
-        group: root
-      when:
-        - pre_config_osa | default(true) | bool
-        - osa_neutron_plugin == "ml2.ovs"
-
-    - name: Drop config to disable serial throttle settings
-      template:
-        src: "user_unserial_variables.j2"
-        dest: /etc/openstack_deploy/user_unserial_variables.yml
-        mode: "0644"
-        owner: root
-        group: root
-      when:
-        - pre_config_osa | default(true) | bool
-        - osa_disable_serial | default(false) | bool
-
     - name: Drop OVS group_vars config
       template:
         src: "ovs_network_hosts_group.j2"
@@ -144,12 +112,10 @@
         mode: "0644"
         owner: root
         group: root
-      when:
-        - pre_config_osa | default(true) | bool
 
     - name: Ensure the user_variables file is populated
       lineinfile:
-        path: /etc/openstack_deploy/user_variables.yml
+        path: /etc/openstack_deploy/user_local_variables.yml
         regexp: '^{{ item }}'
         line: '{{ item }}'
         create: yes
@@ -161,13 +127,6 @@
 
     - name: Bootstrap ansible
       command: bash ./scripts/bootstrap-ansible.sh
-      args:
-        chdir: /opt/openstack-ansible
-      when:
-        - run_osa | default(true) | bool
-
-    - name: Create passwords
-      command: ./scripts/pw-token-gen.py --file /etc/openstack_deploy/user_secrets.yml
       args:
         chdir: /opt/openstack-ansible
       when:
@@ -199,8 +158,7 @@
     - name: Finished notice
       debug:
         msg: |
-          OSA deploy running. To check on the state of this deployment, login
-          to the {{ groups['deploy_hosts'][0] }} VM (ssh -i id_rsa_mnaio.key ubuntu@{{ ansible_ssh_host }}) and attach
-          to the "build-osa" tmux session.
+          RPC deploy running. To check on the state of this deployment, login
+          to the {{ groups['deploy_hosts'][0] }} VM ({{ ansible_ssh_host }}) and attach to the "build-osa" tmux session.
       when:
         - run_osa | default(true) | bool

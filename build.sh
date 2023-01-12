@@ -13,32 +13,36 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-if:IsSet() {
-  [[ ${!1-x} == x ]] && return 1 || return 0
-}
-
-set -u
+#set -u
 
 source ansible-env.rc
 
-# Check for environment variables needed for Terraform
-if:IsSet OS_PASSWORD || echo "Please set OS_PASSWORD or source the OpenStack openrc file."
-if:IsSet OS_USERNAME || echo "Please set OS_USERNAME or source the OpenStack openrc file."
-if:IsSet OS_PROJECT_NAME || echo "Please set OS_PROJECT_NAME or source the OpenStack openrc file."
-if:IsSet OS_AUTH_URL || echo "Please set OS_AUTH_URL or source the OpenStack openrc file."
-if:IsSet MNAIO_OSA_EXTERNAL_NETWORK_NAME || echo "Please set MNAIO_OSA_EXTERNAL_NETWORK_NAME."
-if:IsSet MNAIO_OSA_EXTERNAL_NETWORK_UUID ||  echo "Please set MNAIO_OSA_EXTERNAL_NETWORK_UUID."
+# Terraform relies on the clouds.yaml for authentication.
+
+if [ -z "$MNAIO_OSA_EXTERNAL_NETWORK_NAME" ]
+then
+    echo "Please set MNAIO_OSA_EXTERNAL_NETWORK_NAME"
+    exit 1
+fi
+
+if [ -z "$MNAIO_OSA_EXTERNAL_NETWORK_UUID" ]
+then
+    echo "Please set MNAIO_OSA_EXTERNAL_NETWORK_UUID"
+    exit 1
+fi
 
 # DO NOT MODIFY #
 export TF_VAR_image=${MNAIO_OSA_VM_IMAGE:-"focal"}
+export MNAIO_DEPLOY=${MNAIO_DEPLOY:-"osa"}
+
 
 ###################
 #### THE GOODS ####
 ###################
 
-#pushd terraform
-#terraform init
-#popd
+pushd terraform
+terraform init
+popd
 
 # This playbook downloads images to the local machine for later uploading to Glance
 ansible-playbook playbooks/download-images.yml \
@@ -54,8 +58,19 @@ ansible-playbook -i playbooks/inventory/hosts playbooks/deploy-vms.yml \
 # This playbook bootstraps the VMs (networking, keys, etc)
 ansible-playbook -i playbooks/inventory/hosts playbooks/bootstrap-vms.yml
 
-# This playbook bootstraps OpenStack-Ansible onto deployed VMs
-ansible-playbook -i playbooks/inventory/hosts playbooks/deploy-osa.yml \
-   -e osa_neutron_plugin=${MNAIO_OSA_NEUTRON_PLUGIN:-"ml2.ovs"} \
-   -e osa_branch=${MNAIO_OSA_BRANCH:-"master"} \
-   -e osa_no_containers=${MNAIO_OSA_NO_CONTAINERS:-"true"}
+if [ "$MNAIO_DEPLOY" == "osa" ]; then
+    # This playbook bootstraps OpenStack-Ansible onto deployed VMs
+    ansible-playbook -i playbooks/inventory/hosts playbooks/deploy-osa.yml \
+      -e osa_neutron_plugin=${MNAIO_OSA_NEUTRON_PLUGIN:-"ml2.ovs"} \
+      -e osa_branch=${MNAIO_OSA_BRANCH:-"master"} \
+      -e osa_no_containers=${MNAIO_OSA_NO_CONTAINERS:-"true"}
+elif [ "$MNAIO_DEPLOY" == "rpc" ]; then
+    # This playbook bootstraps Rackspace Private Cloud (OSA) onto deployed VMs
+    ansible-playbook -i playbooks/inventory/hosts playbooks/pre-deploy-rpc.yml \
+      -e osa_neutron_plugin=${MNAIO_OSA_NEUTRON_PLUGIN:-"ml2.ovs"} \
+      -e osa_branch=${MNAIO_OSA_BRANCH:-"master"} \
+      -e osa_no_containers=${MNAIO_OSA_NO_CONTAINERS:-"true"}
+else
+    echo "ERROR: Please set MNAIO_DEPLOY to 'osa' or 'rpc'"
+    exit 1
+fi

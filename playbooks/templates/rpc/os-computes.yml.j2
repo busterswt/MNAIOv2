@@ -1,0 +1,8 @@
+---
+
+compute_hosts: &compute_hosts
+{% for host in groups['compute_hosts'] %}
+  {{ hostvars[host]['inventory_hostname'] }}:
+    ip: {{ hostvars[host]['fixed_ip'] }}
+    no_containers: true
+{% endfor %}

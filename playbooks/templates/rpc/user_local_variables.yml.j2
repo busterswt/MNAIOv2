@@ -1,0 +1,53 @@
+---
+
+### PLEASE MAKE ALL ENVIRONMENT RELATED CHANGES HERE ###
+### WHEN EXISTING OVERRIDES SHOULD BE ALTERED,       ###
+### PLEASE COPY THE OVERRIDE FROM THE GLOBAL CONFIG  ###
+### IN IT'S ENTIRETY AND ALTER LOCALLY HERE.         ###
+
+# (james.denton) Removed for deployment
+#dummy: remove-me-upon-edit
+
+####################################
+# (james.denton) Added for MNAIOv2 #
+####################################
+
+# Reduce memory footprint for mnaio
+galera_innodb_buffer_pool_size: 1024M
+galera_gcache_size: 128M
+
+## OVS ##
+neutron_plugin_type: ml2.ovs
+neutron_ml2_drivers_type: "vlan,local,flat,vxlan"
+neutron_plugin_base:
+  - router
+
+## Keepalived ##
+haproxy_use_keepalived: True
+haproxy_keepalived_external_vip_cidr: "172.25.1.10/32"
+haproxy_keepalived_internal_vip_cidr: "172.25.1.11/32"
+haproxy_keepalived_external_interface: br-mgmt
+haproxy_keepalived_internal_interface: br-mgmt
+haproxy_bind_external_lb_vip_address: 172.25.1.10
+haproxy_bind_internal_lb_vip_address: 172.25.1.11
+
+## Needed ##
+venv_wheel_build_enable: true
+galera_monitoring_allowed_source: 172.25.1.0/24
+designate_pool_uuid: ebde7ef0-5612-42e3-83df-7487cc0d251a
+
+octavia_neutron_management_network_name: lbaas-mgmt
+octavia_provider_network_name: physnet1
+octavia_provider_network_type: vlan
+octavia_management_net_subnet_cidr: "172.29.252.0/22"
+octavia_management_net_subnet_allocation_pools: "172.29.252.10-172.29.255.253"
+octavia_provider_segmentation_id: "3967"
+octavia_service_net_setup: True
+
+# Neutron
+neutron_provider_networks:
+  network_types: "vxlan"
+  network_vxlan_ranges: "1:1000"
+  network_vlan_ranges: "physnet1"
+  network_mappings: "physnet1:br-ex"
+  network_interface_mappings: "br-ex:ens5"

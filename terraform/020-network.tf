@@ -49,7 +49,7 @@ resource "openstack_networking_router_interface_v2" "router_interface_mgmt" {
 
 
 resource "openstack_networking_network_v2" "mnaio-overlay" {
-  name = "mnaio-overlay"
+  name = "${join("-",["${random_pet.pet_name.id}","mnaio-overlay"])}"
 }
 
 #### MNAIO OVERLAY SUBNET ####
@@ -69,7 +69,7 @@ resource "openstack_networking_subnet_v2" "mnaio-overlay" {
 # This avoids the use of the 'trunk' plugin.
 
 resource "openstack_networking_network_v2" "mnaio-provider-ext" {
-  name = "mnaio-provider-ext"
+  name = "${join("-",["${random_pet.pet_name.id}","mnaio-provider-ext"])}"
   external = true
 }
 

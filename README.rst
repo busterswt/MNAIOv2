@@ -163,24 +163,19 @@ Glance
 Networking
 ^^^^^^^^^^
 
-(TODO)
+MNAIOv2 uses undercloud provider and tenant network capabilities to constuct a virtual network infrastructure
+suitable for an OpenStack-Ansible based deployment. Fixed IP and MAC addresses are known and consistent between
+deployments to ease the burden on automation.
 
-Note to me:
-- scenario where we can use "flat" external network in overcloud, but the real interface a 'vxlan' interface in undercloud
+A Neutron router is required to provide connectivity for the 'management' network, and a floating IP sourced
+from the external provider network (`MNAIO_OSA_EXTERNAL_NETWORK_NAME`) is used to provide ingress connectivity
+from the Terraform/Ansible deploy node to the management IP of the MNAIOv2 VMs.
 
-undercloud
+(TODO) 
 
-External Provider Network
-           |
-           |
-           |
-      tenant Router
-        |     |
-        |     |
-        |     |
-- over ext prov  
-- over mgmt (floating)
-- over overlay
+- Construct an external provider network within the MNAIOv2 virtual infrastructure that is reachable
+by the management network and/or deploy node. This will allow users to create networks/vms that are
+reachable within the MNAIOv2 deployment, but not externally.
 
 Deployment
 ----------
@@ -257,14 +252,27 @@ directory:
 
 A successful run of `build.sh` will result in the following message:
 
-xxx
+.. code-block:: bash
 
-Once complete, login to the deploy node and run the RPC scripts:
+    TASK [Finished notice] *************************************************************
+    ok: [mnaio-deploy1] => {}
+    
+    MSG:
+    
+    RPC openstack-ops repo has been downloaded. To proceed, login to the deploy host (mnaio-deploy1)
+    at 192.168.2.239 and run the the following command(s):
+    
+    cd /opt/openstack-ops; SKIP_PROMPTS=true OSA_ENV=lab1 OSA_ENV_LCASE=lab1 OSA_RELEASE=23.4.4 OSA_RUN_PLAY=false RPCO_CONFIG_BRANCH=master scripts/deploy-rpco.sh
+    
+    Once complete, come back and run the "setup-rpc.sh" bash script from the MNAIOv2 directory.
 
-xxxx
+Once complete, login to the deploy node and run the RPC scripts using the appropriate overrides for your environment:
 
-Once the RPC playbook is complete, return to the deploy node and run the
-`setup-rpc.sh` script:
+.. code-block:: bash
+
+    cd /opt/openstack-ops; SKIP_PROMPTS=true OSA_ENV=lab1 OSA_ENV_LCASE=lab1 OSA_RELEASE=23.4.4 OSA_RUN_PLAY=false RPCO_CONFIG_BRANCH=master scripts/deploy-rpco.sh
+
+Once the RPC playbook is complete, return to the deploy node and run the `setup-rpc.sh` script:
 
 .. code-block:: bash
 
@@ -272,6 +280,19 @@ Once the RPC playbook is complete, return to the deploy node and run the
 
 A successful run of `setup-rpc.sh` will result in the following message:
 
-xxx
-    
+.. code-block:: bash
 
+    TASK [Finished notice] *************************************************************
+    ok: [mnaio-deploy1] => {}
+    
+    MSG:
+    
+    RPC deploy running. To check on the state of this deployment, login
+    to the mnaio-deploy1 VM (192.168.2.239) and attach to the "build-osa" tmux session.
+
+From here, SSH to the mnaio-deploy1 VM and execute `tmux attach`, then run the OSA deployment
+playbooks:
+
+.. code-block:: bash
+
+    root@adjusted-shrew-mnaio-deploy1:/opt/openstack-ansible/playbooks# openstack-ansible setup-everything.yml

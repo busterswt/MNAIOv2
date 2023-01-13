@@ -32,5 +32,5 @@ required_version = ">= 0.14.0"
 # The OpenStack provider is using clouds.yaml.
 
 provider "openstack" {
-  cloud = "openstack"
+  cloud = "mnaiov2"
 }

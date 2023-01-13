@@ -1,8 +1,8 @@
 
 OpenStack-Ansible Multi-Node All-in-One (MNAIO) v2
 ##################################################
-:date: 2022-12-18
-:tags: rackspace, openstack, ansible
+:date: 2023-01-13
+:tags: mnaio, rackspace, openstack, ansible, openstack-ansible
 
 About this repository
 ---------------------
@@ -88,7 +88,7 @@ By default, MNAIOv2 will deploy an OpenStack cloud with the following
 attributes:
 
 - Ubuntu Focal 20.04 LTS
-- OpenStack-Ansible (Master branch)
+- OpenStack-Ansible (`master` branch)
 - Neutron ML2/OVS
 
 All overrides can be set using environment variables prior to executing the
@@ -108,18 +108,19 @@ Set the Neutron external provider network name (from undercloud)
 Set the Neutron external provider network uuid (from undercloud)
   ``export MNAIO_OSA_EXTERNAL_NETWORK_UUID="<openstack external provider network uuid>"``
 
-A `clouds.yaml` file is also required for authentication.
+A `clouds.yaml` file is also required for authentication. Create and save the file as
+`~/.config/openstack/clouds.yaml`.
 
 Example:
 
 .. code-block:: bash
 
   clouds:
-    openstack:
+    mnaiov2:
       auth:
         auth_url: https://openstack.cloud.com:5000
         username: "admin"
-        password: "wme7rr72vs&"
+        password: "wme7rr72vs&123"
         project_id: 7a8df96a3c6a47118e60e57aa9ecff54
         project_name: "admin"
         user_domain_name: "Default"
@@ -130,7 +131,8 @@ Example:
 Optional
 ^^^^^^^^
 
-The variables here are optional, as there are defaults in place.
+The variables here are optional, as there are defaults in place. Change them according to
+your deployment preference:
 
 Set the OpenStack-Ansible branch
   ``export MNAIO_OSA_BRANCH="${MNAIO_OSA_BRANCH:-master}"``
@@ -187,20 +189,12 @@ To deploy an MNAIOv2 environment, simply execute the following:
 
 .. code-block:: bash
 
-    export OS_USERNAME=<openstack username>
-    export OS_TENANT_NAME=<openstack tenant/project name>
-    export OS_PASSWORD=<openstack password>
-    export OS_AUTH_URL=<openstack auth url>
     bash build.sh
 
 To destroy an MNAIOv2 environment, simply execute the following:
 
 .. code-block:: bash
 
-    export OS_USERNAME=<openstack username>
-    export OS_TENANT_NAME=<openstack tenant/project name>
-    export OS_PASSWORD=<openstack password>
-    export OS_AUTH_URL=<openstack auth url>
     bash destroy.sh
 
 If the VM deployment is successful, you should see the following:
@@ -250,10 +244,10 @@ Rackspace Private Cloud
 =======================
 
 MNAIOv2 can deploy a Rackspace Private Cloud environment based on OpenStack-Ansible but
-using custom templates. This method requires access to certain private GitHub repos and
-a slighty different workflow.
+using custom RPC-O templates. This method requires access to certain private GitHub repos and
+uses a slighty different workflow.
 
-Set the deployment method from `osa` to `rpc` and run the `build.sh` scripts from the MNAIOv2
+Set the deployment method from `osa` (default) to `rpc` and run the `build.sh` scripts from the MNAIOv2
 directory:
 
 .. code-block:: bash
@@ -261,16 +255,23 @@ directory:
     export MNAIO_DEPLOY=rpc
     bash build.sh
 
+A successful run of `build.sh` will result in the following message:
+
+xxx
+
 Once complete, login to the deploy node and run the RPC scripts:
 
 xxxx
 
-Come back to the deploy node and run the `setup-rpc.yml` playbook:
+Once the RPC playbook is complete, return to the deploy node and run the
+`setup-rpc.sh` script:
 
-xxxx
+.. code-block:: bash
 
-That's it!
-:
+    bash setup-rpc.sh
 
+A successful run of `setup-rpc.sh` will result in the following message:
+
+xxx
     
 

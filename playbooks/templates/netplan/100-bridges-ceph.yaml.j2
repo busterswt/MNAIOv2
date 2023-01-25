@@ -4,9 +4,9 @@ network:
         br-mgmt:
             dhcp4: true
             interfaces: [ ens3 ]
-        br-overlay:
-            dhcp4: true
-            interfaces: [ ens4 ] 
         br-storage:
+            dhcp4: true
+            interfaces: [ ens4 ]
+        br-repl:
             dhcp4: true
             interfaces: [ ens5 ]

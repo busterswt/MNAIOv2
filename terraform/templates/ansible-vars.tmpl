@@ -1,0 +1,35 @@
+---
+# IP addresses for the hosts under management
+tf_ansible_ips:
+%{ for host, key in controller-mgmt ~}
+  - host: ${ host }
+    mgmt_ip: ${ controller-mgmt[host].fixed_ip[0].ip_address }
+    overlay_ip: ${ controller-overlay[host].fixed_ip[0].ip_address }
+    storage_ip: ${ controller-storage[host].fixed_ip[0].ip_address }
+%{ endfor ~}
+%{ for host, key in compute-mgmt ~}
+  - host: ${ host }
+    mgmt_ip: ${ compute-mgmt[host].fixed_ip[0].ip_address }
+    overlay_ip: ${ compute-overlay[host].fixed_ip[0].ip_address }
+    storage_ip: ${ compute-storage[host].fixed_ip[0].ip_address }
+%{ endfor ~}
+%{ for host, key in loadbalancer-mgmt ~}
+  - host: ${ host }
+    mgmt_ip: ${ loadbalancer-mgmt[host].fixed_ip[0].ip_address }
+%{ endfor ~}
+%{ for host, key in deployer-mgmt ~}
+  - host: ${ host }
+    mgmt_ip: ${ deployer-mgmt[host].fixed_ip[0].ip_address }
+%{ endfor ~}
+%{ for host, key in ceph-mgmt ~}
+  - host: ${ host }
+    mgmt_ip: ${ ceph-mgmt[host].fixed_ip[0].ip_address }
+    storage_ip: ${ ceph-storage[host].fixed_ip[0].ip_address }
+    replication_ip: ${ ceph-storage[host].fixed_ip[0].ip_address }
+%{ endfor ~}
+
+# Subnets
+tf_ansible_mgmt_cidr: ${ subnet-mgmt.cidr }
+tf_ansible_overlay_cidr: ${ subnet-overlay.cidr }
+tf_ansible_storage_cidr: ${ subnet-storage.cidr }
+tf_ansible_replication_cidr: ${ subnet-replication.cidr }

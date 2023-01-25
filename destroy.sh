@@ -24,3 +24,10 @@ TF_VAR_image=dummy \
 TF_VAR_external_network='{"name":"dummy","uuid":"dummy"}' \
 terraform destroy
 popd
+
+###############
+#### CLEAN ####
+###############
+
+# This playbook cleans the local environment and deletes auto-generated Terraform files
+ansible-playbook playbooks/clean.yml

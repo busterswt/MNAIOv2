@@ -1,7 +1,7 @@
 
 OpenStack-Ansible Multi-Node All-in-One (MNAIO) v2
 ##################################################
-:date: 2023-01-13
+:date: 2023-01-25
 :tags: mnaio, rackspace, openstack, ansible, openstack-ansible
 
 About this repository
@@ -22,10 +22,13 @@ The deployed environment consists of the following:
 - 2x Load Balancers (4 vCPUs, 4 GB RAM, 20 GB Disk)
 - 3x Controllers (12 vCPUs, 32 GB RAM, 60 GB Disk)
 - 3x Computes (8 vCPUs, 16 GB RAM, 40 GB Disk)
+- 3x Ceph (4 vCPUs, 8 GB RAM, 40 GB Disk + 3x 10GB OSDs)
 
 The script(s) will build and deploy OpenStack across multiple virtual
 instances, and is customizable using standard OpenStack-Ansible
 mechanisms.
+
+***Ensure quotas allow such resource utilization!***
 
 Installation
 ------------
@@ -33,9 +36,10 @@ Installation
 The OpenStack (under)cloud must have the resources available to support the instance
 flavors noted above:
 
-- 72 vCPU
-- 156 GB RAM
-- 360 GB Disk
+- 84 vCPU
+- 180 GB RAM
+- 480 GB Disk
+- 90 GB Disk (via Cinder)
 
 Download this repository to your local workstation or to a machine that
 has access to an OpenStack-based cloud. The machine must be able to access
@@ -140,8 +144,11 @@ Set the OpenStack-Ansible branch
 Set the Neutron plugin (options: ml2.ovs,ml2.ovn)
   ``export MNAIO_OSA_NEUTRON_PLUGIN="${MNAIO_OSA_NEUTRON_PLUGIN:-ml2.ovs}"``
 
-Set the instance image type (options: focal,jammy)
+Set the instance image type for automatic download (options: focal,jammy)
   ``export MNAIO_OSA_VM_IMAGE="${MNAIO_OSA_VM_IMAGE:-focal}"``
+
+Set the image UUID (for existing cloud images) - NOTE: Overrides MNAIO_OSA_VM_IMAGE
+  ``export MNAIO_OSA_VM_IMAGE_UUID=<Existing Glance Image UUID>``
 
 Set the deployment to metal versus containers
   ``export MNAIO_OSA_NO_CONTAINERS="${MNAIO_OSA_NO_CONTAINERS:-true}"``
@@ -170,12 +177,6 @@ deployments to ease the burden on automation.
 A Neutron router is required to provide connectivity for the 'management' network, and a floating IP sourced
 from the external provider network (`MNAIO_OSA_EXTERNAL_NETWORK_NAME`) is used to provide ingress connectivity
 from the Terraform/Ansible deploy node to the management IP of the MNAIOv2 VMs.
-
-(TODO) 
-
-- Construct an external provider network within the MNAIOv2 virtual infrastructure that is reachable
-by the management network and/or deploy node. This will allow users to create networks/vms that are
-reachable within the MNAIOv2 deployment, but not externally.
 
 Deployment
 ----------

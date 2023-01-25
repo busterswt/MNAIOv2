@@ -32,5 +32,4 @@
       project_path: "{{ playbook_dir }}/../terraform"
       state: present
       variables:
-        image: "{{ images[osa_vm_image].name }}"
         external_network: "{{ _external_network | to_json }}"

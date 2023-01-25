@@ -1,0 +1,64 @@
+---
+# Copyright 2022, Rackspace US, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in witing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: Create Terraform files based on scenario
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  any_errors_fatal: true
+  vars_files:
+    - vars/main.yml
+  tasks:
+    - name: Drop Terraform controller file
+      template:
+        src: "tf/060-instance_controller.tf.j2"
+        dest: "{{ playbook_dir }}/../terraform/060-instance_controller.tf"
+        mode: "0644"
+
+    - name: Drop Terraform compute file
+      template:
+        src: "tf/061-instance_compute.tf.j2"
+        dest: "{{ playbook_dir }}/../terraform/061-instance_compute.tf"
+        mode: "0644"
+
+    - name: Drop Terraform loadbalancer file
+      template:
+        src: "tf/062-instance_loadbalancer.tf.j2"
+        dest: "{{ playbook_dir }}/../terraform/062-instance_loadbalancer.tf"
+        mode: "0644"
+
+    - name: Drop Terraform deployer file
+      template:
+        src: "tf/063-instance_deploy.tf.j2"
+        dest: "{{ playbook_dir }}/../terraform/063-instance_deploy.tf"
+        mode: "0644"
+
+    - name: Drop Terraform ceph file
+      template:
+        src: "tf/064-instance_ceph.tf.j2"
+        dest: "{{ playbook_dir }}/../terraform/064-instance_ceph.tf"
+        mode: "0644"
+
+    - name: Drop Ansible hosts file
+      template:
+        src: "tf/100-inventory.tf.j2"
+        dest: "{{ playbook_dir }}/../terraform/100-inventory.tf"
+        mode: "0644"
+
+    - name: Drop Ansible vars file
+      template:
+        src: "tf/101-ansible-vars.tf.j2"
+        dest: "{{ playbook_dir }}/../terraform/101-ansible-vars.tf"
+        mode: "0644"

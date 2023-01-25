@@ -32,6 +32,15 @@
       delay: 10
       until: not copied.failed
 
+    - name: Generate /etc/hosts
+      blockinfile:
+        dest: /etc/hosts
+        marker: "# {mark} ANSIBLE GENERATED HOSTS"
+        block: |
+            {% for host in groups['all'] %}
+            {{ hostvars[host]['fixed_ip'] }} {{ hostvars[host]['long_hostname'] }}
+            {% endfor %}
+
 - name: Set MaxSessions and MaxStartups to reduce connection failures
   hosts: all
   gather_facts: "{{ gather_facts | default(true) }}"
@@ -97,6 +106,15 @@
       when:
         - ('deploy_hosts' in group_names) or ('loadbalancer_hosts' in group_names)
 
+    - name: Drop bridge templates on ceph
+      blockinfile:
+        path: /etc/netplan/50-cloud-init.yaml
+        block: "{{ lookup('file', '{{ playbook_dir }}/templates/netplan/100-bridges-ceph.yaml.j2') }}"
+      notify:
+        - apply netplan
+      when:
+        - ('ceph_hosts' in group_names)
+
     - name: Update MACAddressPolicy to none (for Ubuntu 22.04)
       community.general.ini_file:
         path: /usr/lib/systemd/network/99-default.link
@@ -112,3 +130,17 @@
   handlers:
     - name: apply netplan
       command: "netplan apply"
+
+- name: Ceph bootstrapping
+  hosts: mnaio-ceph1
+  gather_facts: false
+  any_errors_fatal: true
+  become: true
+  tasks:
+    - name: Drop ceph-service.yaml
+      template:
+        src: "ceph-service.yaml.j2"
+        dest: /root/ceph-service.yaml
+        mode: "0644"
+        owner: root
+        group: root

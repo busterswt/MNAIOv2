@@ -1,20 +1,27 @@
-
+#####################
 #### CONTROLLERS ####
+#####################
 
-# Create instance
+#########################
+#### Create instance ####
+#########################
+
 resource "openstack_compute_instance_v2" "controller" {
   for_each    = local.controller_nodes
   name        = "${join("-",["${random_pet.pet_name.id}","${each.key}"])}"
-  image_name  = var.image
+  image_id    = {% if osa_vm_image_uuid == "" %}openstack_images_image_v2.osa-mnaio-image.id{% else %}{{ osa_vm_image_uuid }}{% endif %}{{''}}
   flavor_id   = openstack_compute_flavor_v2.osa-mnaio-controller-flavor.id
   key_pair    = openstack_compute_keypair_v2.user_key.name
   user_data   = file("scripts/cloud-init.yaml")
-  config_drive = true
+  config_drive = false
   network {
     port = openstack_networking_port_v2.controller-mgmt[each.key].id
   }
   network {
     port = openstack_networking_port_v2.controller-overlay[each.key].id
+  }
+  network {
+    port = openstack_networking_port_v2.controller-storage[each.key].id
   }
   network {
     port = openstack_networking_port_v2.controller-provider[each.key].id
@@ -23,7 +30,10 @@ resource "openstack_compute_instance_v2" "controller" {
   depends_on = [ openstack_images_image_v2.osa-mnaio-image ]
 }
 
-# Create network port
+#############################
+#### Create network port ####
+#############################
+
 resource "openstack_networking_port_v2" "controller-mgmt" {
   for_each       = local.controller_nodes
   name           = "${join("-",["${random_pet.pet_name.id}","mgmt","${each.key}"])}"
@@ -31,7 +41,6 @@ resource "openstack_networking_port_v2" "controller-mgmt" {
   admin_state_up = true
   no_security_groups = true
   port_security_enabled = false
-  mac_address = each.value.mgmt_mac
   fixed_ip {
     ip_address = each.value.mgmt_addr
     subnet_id = openstack_networking_subnet_v2.mnaio-management.id
@@ -45,10 +54,22 @@ resource "openstack_networking_port_v2" "controller-overlay" {
   admin_state_up = true
   no_security_groups = true
   port_security_enabled = false
-  mac_address = each.value.overlay_mac
   fixed_ip {
     ip_address = each.value.overlay_addr
     subnet_id = openstack_networking_subnet_v2.mnaio-overlay.id
+  }
+}
+
+resource "openstack_networking_port_v2" "controller-storage" {
+  for_each       = local.controller_nodes
+  name           = "${join("-",["${random_pet.pet_name.id}","storage","${each.key}"])}"
+  network_id     = openstack_networking_network_v2.mnaio-storage.id
+  admin_state_up = true
+  no_security_groups = true
+  port_security_enabled = false
+  fixed_ip {
+    ip_address = each.value.storage_addr
+    subnet_id = openstack_networking_subnet_v2.mnaio-storage.id
   }
 }
 
@@ -59,14 +80,15 @@ resource "openstack_networking_port_v2" "controller-provider" {
   admin_state_up = true
   no_security_groups = true
   port_security_enabled = false
-  mac_address = each.value.provider_mac
   fixed_ip {
     ip_address = each.value.provider_addr
     subnet_id = openstack_networking_subnet_v2.mnaio-provider-ext.id
   }
 }
 
+######################
 #### Floating IPs ####
+######################
 
 resource "openstack_networking_floatingip_v2" "controller_floating_ip_mgmt" {
   pool         = var.external_network["name"]
@@ -79,5 +101,5 @@ resource "openstack_compute_floatingip_associate_v2" "controller_fip_associate_m
   floating_ip     = "${openstack_networking_floatingip_v2.controller_floating_ip_mgmt[each.key].address}"
   fixed_ip        = "${openstack_compute_instance_v2.controller[each.key].network.0.fixed_ip_v4}"
 
-  depends_on = [ openstack_networking_router_interface_v2.router_interface_mgmt ]
+  depends_on = [ openstack_networking_router_interface_v2.router-interface-mgmt ]
 }

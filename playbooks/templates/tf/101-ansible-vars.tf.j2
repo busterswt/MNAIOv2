@@ -1,0 +1,28 @@
+resource "local_file" "ansible_vars" {
+  content = templatefile("${path.module}/templates/ansible-vars.tmpl",
+    {
+      controller-mgmt           = openstack_networking_port_v2.controller-mgmt
+      controller-overlay        = openstack_networking_port_v2.controller-overlay
+      controller-storage        = openstack_networking_port_v2.controller-storage
+      compute-mgmt              = openstack_networking_port_v2.compute-mgmt
+      compute-overlay           = openstack_networking_port_v2.compute-overlay
+      compute-storage           = openstack_networking_port_v2.compute-storage
+      loadbalancer-mgmt         = openstack_networking_port_v2.loadbalancer-mgmt
+      deployer-mgmt             = openstack_networking_port_v2.deployer-mgmt
+      ceph-mgmt                 = openstack_networking_port_v2.ceph-mgmt
+      ceph-storage              = openstack_networking_port_v2.ceph-storage
+      ceph-replication          = openstack_networking_port_v2.ceph-replication
+      subnet-mgmt               = openstack_networking_subnet_v2.mnaio-management
+      subnet-overlay            = openstack_networking_subnet_v2.mnaio-overlay
+      subnet-storage            = openstack_networking_subnet_v2.mnaio-storage
+      subnet-replication        = openstack_networking_subnet_v2.mnaio-replication
+    }
+  )
+  filename = "${path.module}/../playbooks/vars/terraform.yml"
+
+  depends_on = [ openstack_compute_floatingip_associate_v2.controller_fip_associate_mgmt,
+                 openstack_compute_floatingip_associate_v2.compute_fip_associate_mgmt,
+                 openstack_compute_floatingip_associate_v2.loadbalancer_fip_associate_mgmt,
+                 openstack_compute_floatingip_associate_v2.ceph_fip_associate_mgmt,
+                 openstack_compute_floatingip_associate_v2.deployer_fip_associate_mgmt ]
+}

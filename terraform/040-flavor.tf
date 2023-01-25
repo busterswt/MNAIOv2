@@ -27,3 +27,10 @@ resource "openstack_compute_flavor_v2" "osa-mnaio-deployer-flavor" {
   vcpus = "4"
   disk  = "20"
 }
+
+resource "openstack_compute_flavor_v2" "osa-mnaio-ceph-flavor" {
+  name  = "${join("-",["${random_pet.pet_name.id}","osa-mnaio-ceph"])}"
+  ram   = "8192"
+  vcpus = "4"
+  disk  = "40"
+}

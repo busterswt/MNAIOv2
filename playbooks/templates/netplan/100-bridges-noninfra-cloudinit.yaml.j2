@@ -1,0 +1,24 @@
+network:
+    version: 2
+    ethernets:
+      ens3:
+        set-name: ens3
+      ens4:
+        set-name: ens4
+      ens5:
+        set-name: ens5
+      ens6:
+        set-name: ens6
+    bridges:
+        br-mgmt:
+          dhcp4: false
+          addresses:
+          - {{ tf_ansible_mgmt_ip.ansible_host.fixed_ip }} ansible192.168.1.10/255.255.255.0
+          gateway4: 192.168.1.254
+            interfaces: [ ens3 ]
+        br-overlay:
+          dhcp4: true
+          interfaces: [ ens4 ] 
+        br-storage:
+          dhcp4: true
+          interfaces: [ ens5 ]

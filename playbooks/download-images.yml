@@ -29,18 +29,22 @@
 
     - name: Check for existence of local images
       ansible.builtin.stat:
-        path: "{{ playbook_dir }}/../images/{{ item.value.filename }}"
-      loop: "{{ lookup('dict', images) }}"
+        path: "{{ playbook_dir }}/../images/{{ images[osa_vm_image].filename }}"
       register: file_stat_var
 
-    - name: Download images to local directory, if doesn't exist
+    - name: Get sha256sum from checksum file
+      shell: "curl --silent {{ images[osa_vm_image].sha256file }} | grep {{ images[osa_vm_image].filename }} | awk '{print $1}'"
+      register: sha256sum_image
+
+    - name: Download image to local directory, if doesn't exist
       ansible.builtin.get_url:
-        url: "{{ item.item.value.url }}"
+        url: "{{ images[osa_vm_image].url }}"
         dest: "{{ playbook_dir }}/../images/"
-        checksum: "sha256:{{ item.item.value.sha256 }}"
+        checksum: "sha256:{{ sha256sum_image.stdout }}"
         mode: '0440'
-      loop: "{{ file_stat_var.results }}"
-      when: not item.stat.exists
+      when:
+        - osa_vm_image_uuid == ""
+        - not file_stat_var.stat.exists
 
     - name: Drop Terraform image file
       template:
@@ -49,4 +53,4 @@
         mode: "0644"
       vars:
         - image: "{{ images[osa_vm_image] }}"          
-
+      when: osa_vm_image_uuid == ""

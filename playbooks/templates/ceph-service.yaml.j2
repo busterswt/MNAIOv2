@@ -1,0 +1,17 @@
+{% for host in groups['ceph_hosts'] %}
+---
+service_type: host
+addr: {{ hostvars[host]['fixed_ip'] }}
+hostname: {{ hostvars[host]['long_hostname'] }}
+{% endfor %}
+---
+service_type: mon
+placement:
+  host_pattern: "*"
+---
+service_type: osd
+service_id: my_osds
+placement:
+  host_pattern: "*"
+data_devices:
+  all: true

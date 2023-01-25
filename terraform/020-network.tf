@@ -1,19 +1,12 @@
 #### NETWORK CONFIGURATION ####
 
+#################
+#### ROUTERS ####
+#################
+
 # This router will connect all MNAIO-related networks
 # Connectivity to the management interfaces will be provided
 # via Floating IPs. Same for deployed VMs (at some point).
-
-resource "openstack_networking_router_v2" "mnaio-mgmt-router" {
-  name                = "${join("-",["${random_pet.pet_name.id}","${var.management_router.name}"])}"
-  admin_state_up      = true
-  external_network_id = var.external_network["uuid"]
-  enable_snat         = true
-}
-
-# This router will act as a gateway for the 'external' network deployed in the
-# overcloud, which for the purpose of MNAIO is for  VMs deployed
-# and accessed once the cloud is deployed.
 
 resource "openstack_networking_router_v2" "mnaio-overcloud-router" {
   name                = "${join("-",["${random_pet.pet_name.id}","${var.overcloud_router.name}"])}"
@@ -22,10 +15,9 @@ resource "openstack_networking_router_v2" "mnaio-overcloud-router" {
   enable_snat         = true
 }
 
+#################################
 #### MNAIO MANGEMENT NETWORK ####
-
-# This is a "vlan" network in the underlay, and needs
-# to be terminated on the Firepower.
+#################################
 
 resource "openstack_networking_network_v2" "mnaio-management" {
   name = "${join("-",["${random_pet.pet_name.id}","mnaio-management"])}"
@@ -38,21 +30,18 @@ resource "openstack_networking_subnet_v2" "mnaio-management" {
   dns_nameservers = var.dns_ip
 }
 
-# Create a router and attach to the MNAIO management network
-
-resource "openstack_networking_router_interface_v2" "router_interface_mgmt" {
-  router_id = "${openstack_networking_router_v2.mnaio-mgmt-router.id}"
+resource "openstack_networking_router_interface_v2" "router-interface-mgmt" {
+  router_id = "${openstack_networking_router_v2.mnaio-overcloud-router.id}"
   subnet_id = "${openstack_networking_subnet_v2.mnaio-management.id}"
 }
 
+###############################
 #### MNAIO OVERLAY NETWORK ####
-
+###############################
 
 resource "openstack_networking_network_v2" "mnaio-overlay" {
   name = "${join("-",["${random_pet.pet_name.id}","mnaio-overlay"])}"
 }
-
-#### MNAIO OVERLAY SUBNET ####
 
 resource "openstack_networking_subnet_v2" "mnaio-overlay" {
   name            = "${join("-",["${random_pet.pet_name.id}","${var.network_overlay["subnet_name"]}"])}"
@@ -62,11 +51,48 @@ resource "openstack_networking_subnet_v2" "mnaio-overlay" {
   no_gateway      = true
 }
 
-#### MNAIO PROVIDER NETWORK ####
+###############################
+#### MNAIO STORAGE NETWORK ####
+###############################
 
-# The undercloud needs to provision a VLAN provider network
-# that will be used by the overcloud as a FLAT provider network.
-# This avoids the use of the 'trunk' plugin.
+resource "openstack_networking_network_v2" "mnaio-storage" {
+  name = "${join("-",["${random_pet.pet_name.id}","mnaio-storage"])}"
+}
+
+resource "openstack_networking_subnet_v2" "mnaio-storage" {
+  name            = "${join("-",["${random_pet.pet_name.id}","${var.network_storage["subnet_name"]}"])}"
+  network_id      = openstack_networking_network_v2.mnaio-storage.id
+  cidr            = var.network_storage["cidr"]
+  dns_nameservers = var.dns_ip
+  no_gateway      = true
+}
+
+###################################
+#### MNAIO REPLICATION NETWORK ####
+###################################
+
+resource "openstack_networking_network_v2" "mnaio-replication" {
+  name = "${join("-",["${random_pet.pet_name.id}","mnaio-replication"])}"
+}
+
+resource "openstack_networking_subnet_v2" "mnaio-replication" {
+  name            = "${join("-",["${random_pet.pet_name.id}","${var.network_replication["subnet_name"]}"])}"
+  network_id      = openstack_networking_network_v2.mnaio-replication.id
+  cidr            = var.network_replication["cidr"]
+  dns_nameservers = var.dns_ip
+  no_gateway      = true
+}
+
+################################
+#### MNAIO PROVIDER NETWORK ####
+################################
+
+# The goal here is to leverage an undercloud "tenant" network
+# as an overcloud "provider" network. The overcloud provider
+# network will be reachable from any overcloud node, as it will
+# sit behind the same undercloud Neutron router. That router
+# should provide outbound SNAT capabilities whether or not
+# floating IPs are used by the overcloud.
 
 resource "openstack_networking_network_v2" "mnaio-provider-ext" {
   name = "${join("-",["${random_pet.pet_name.id}","mnaio-provider-ext"])}"
@@ -78,10 +104,22 @@ resource "openstack_networking_subnet_v2" "mnaio-provider-ext" {
   network_id      = openstack_networking_network_v2.mnaio-provider-ext.id
   cidr            = var.network_provider["cidr"]
   no_gateway      = true
+  enable_dhcp     = false
 }
 
-#resource "openstack_networking_router_interface_v2" "router_interface_overcloud_ext" {
-#  router_id = "${openstack_networking_router_v2.mnaio-overcloud-router.id}"
-#  subnet_id = "${openstack_networking_subnet_v2.mnaio-provider-ext.id}"
-#}
+resource "openstack_networking_port_v2" "mnaio-router-provider-port" {
+  name           = "${join("-",["${random_pet.pet_name.id}","mnaio-router-provider-ext"])}"
+  network_id     = openstack_networking_network_v2.mnaio-provider-ext.id
+  fixed_ip {
+    subnet_id    = openstack_networking_subnet_v2.mnaio-provider-ext.id
+    ip_address   = "10.239.0.1"
+  }
+  no_security_groups        = true
+  port_security_enabled     = false
+  admin_state_up = "true"
+}
 
+resource "openstack_networking_router_interface_v2" "router-interface-provider-ext" {
+  router_id = "${openstack_networking_router_v2.mnaio-overcloud-router.id}"
+  port_id = "${openstack_networking_port_v2.mnaio-router-provider-port.id}"
+}

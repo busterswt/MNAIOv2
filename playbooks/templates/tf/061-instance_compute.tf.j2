@@ -4,16 +4,19 @@
 resource "openstack_compute_instance_v2" "compute" {
   for_each    = local.compute_nodes
   name        = "${join("-",["${random_pet.pet_name.id}","${each.key}"])}"
-  image_name  = var.image
+  image_id    = {% if osa_vm_image_uuid == "" %}openstack_images_image_v2.osa-mnaio-image.id{% else %}{{ osa_vm_image_uuid }}{% endif %}{{''}}
   flavor_id   = openstack_compute_flavor_v2.osa-mnaio-compute-flavor.id
   key_pair    = openstack_compute_keypair_v2.user_key.name
   user_data   = file("scripts/cloud-init.yaml")
-  config_drive = true
+  config_drive = false
   network {
     port = openstack_networking_port_v2.compute-mgmt[each.key].id
   }
   network {
     port = openstack_networking_port_v2.compute-overlay[each.key].id
+  }
+  network {
+    port = openstack_networking_port_v2.compute-storage[each.key].id
   }
   network {
     port = openstack_networking_port_v2.compute-provider[each.key].id
@@ -31,7 +34,6 @@ resource "openstack_networking_port_v2" "compute-mgmt" {
   security_group_ids = [
     openstack_networking_secgroup_v2.secgrp-mnaio.id
   ]
-  mac_address = each.value.mgmt_mac
   fixed_ip {
     ip_address = each.value.mgmt_addr
     subnet_id = openstack_networking_subnet_v2.mnaio-management.id
@@ -46,10 +48,23 @@ resource "openstack_networking_port_v2" "compute-overlay" {
   security_group_ids = [
     openstack_networking_secgroup_v2.secgrp-mnaio.id
   ]
-  mac_address = each.value.overlay_mac
   fixed_ip {
     ip_address = each.value.overlay_addr
     subnet_id = openstack_networking_subnet_v2.mnaio-overlay.id
+  }
+}
+
+resource "openstack_networking_port_v2" "compute-storage" {
+  for_each       = local.compute_nodes
+  name           = "${join("-",["${random_pet.pet_name.id}","storage","${each.key}"])}"
+  network_id     = openstack_networking_network_v2.mnaio-storage.id
+  admin_state_up = true
+  security_group_ids = [
+    openstack_networking_secgroup_v2.secgrp-mnaio.id
+  ]
+  fixed_ip {
+    ip_address = each.value.storage_addr
+    subnet_id = openstack_networking_subnet_v2.mnaio-storage.id
   }
 }
 
@@ -60,7 +75,6 @@ resource "openstack_networking_port_v2" "compute-provider" {
   admin_state_up = true
   no_security_groups = true
   port_security_enabled = false
-  mac_address = each.value.provider_mac
   fixed_ip {
     ip_address = each.value.provider_addr
     subnet_id = openstack_networking_subnet_v2.mnaio-provider-ext.id
@@ -80,5 +94,5 @@ resource "openstack_compute_floatingip_associate_v2" "compute_fip_associate_mgmt
   floating_ip     = "${openstack_networking_floatingip_v2.compute_floating_ip_mgmt[each.key].address}"
   fixed_ip        = "${openstack_compute_instance_v2.compute[each.key].network.0.fixed_ip_v4}"
 
-  depends_on = [ openstack_networking_router_interface_v2.router_interface_mgmt ]
+  depends_on = [ openstack_networking_router_interface_v2.router-interface-mgmt ]
 }

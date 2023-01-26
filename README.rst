@@ -28,7 +28,7 @@ The script(s) will build and deploy OpenStack across multiple virtual
 instances, and is customizable using standard OpenStack-Ansible
 mechanisms.
 
-***Ensure quotas allow such resource utilization!***
+**Ensure quotas allow such resource utilization!**
 
 Installation
 ------------
@@ -56,7 +56,7 @@ Prerequisites
 - Terraform (>=1.3.6)
 
 From within the MNAIOv2 directory, install Ansible and required collections
-with the following commands (Ubuntu 20.04):
+with the following commands:
 
 .. code-block:: bash
 

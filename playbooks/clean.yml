@@ -43,11 +43,12 @@
         path: "{{ item }}"
         state: absent
       with_items:
+        - "{{ playbook_dir }}/../terraform/040-flavor.tf"
         - "{{ playbook_dir }}/../terraform/050-image.tf"
         - "{{ playbook_dir }}/../terraform/060-instance_controller.tf"
         - "{{ playbook_dir }}/../terraform/061-instance_compute.tf"
         - "{{ playbook_dir }}/../terraform/062-instance_loadbalancer.tf"
-        - "{{ playbook_dir }}/../terraform/063-instance_deploy.tf"
+        - "{{ playbook_dir }}/../terraform/063-instance_deployer.tf"
         - "{{ playbook_dir }}/../terraform/064-instance_ceph.tf"
         - "{{ playbook_dir }}/../terraform/100-inventory.tf"
         - "{{ playbook_dir }}/../terraform/101-ansible-vars.tf"

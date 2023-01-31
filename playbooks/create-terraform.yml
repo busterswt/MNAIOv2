@@ -21,44 +21,18 @@
   vars_files:
     - vars/main.yml
   tasks:
-    - name: Drop Terraform controller file
+    - name: Generate Terraform files
       template:
-        src: "tf/060-instance_controller.tf.j2"
-        dest: "{{ playbook_dir }}/../terraform/060-instance_controller.tf"
+        src: "{{ item.src }}"
+        dest: "{{ playbook_dir }}/../terraform/{{ item.dest }}"
         mode: "0644"
-
-    - name: Drop Terraform compute file
-      template:
-        src: "tf/061-instance_compute.tf.j2"
-        dest: "{{ playbook_dir }}/../terraform/061-instance_compute.tf"
-        mode: "0644"
-
-    - name: Drop Terraform loadbalancer file
-      template:
-        src: "tf/062-instance_loadbalancer.tf.j2"
-        dest: "{{ playbook_dir }}/../terraform/062-instance_loadbalancer.tf"
-        mode: "0644"
-
-    - name: Drop Terraform deployer file
-      template:
-        src: "tf/063-instance_deploy.tf.j2"
-        dest: "{{ playbook_dir }}/../terraform/063-instance_deploy.tf"
-        mode: "0644"
-
-    - name: Drop Terraform ceph file
-      template:
-        src: "tf/064-instance_ceph.tf.j2"
-        dest: "{{ playbook_dir }}/../terraform/064-instance_ceph.tf"
-        mode: "0644"
-
-    - name: Drop Ansible hosts file
-      template:
-        src: "tf/100-inventory.tf.j2"
-        dest: "{{ playbook_dir }}/../terraform/100-inventory.tf"
-        mode: "0644"
-
-    - name: Drop Ansible vars file
-      template:
-        src: "tf/101-ansible-vars.tf.j2"
-        dest: "{{ playbook_dir }}/../terraform/101-ansible-vars.tf"
-        mode: "0644"
+      with_items:
+        - { src: 'tf/040-flavor.tf.j2', dest: '040-flavor.tf' }
+        - { src: 'tf/060-instance_controller.tf.j2', dest: '060-instance_controller.tf' }
+        - { src: 'tf/061-instance_compute.tf.j2', dest: '061-instance_compute.tf' }
+        - { src: 'tf/062-instance_loadbalancer.tf.j2', dest: '062-instance_loadbalancer.tf' }
+        - { src: 'tf/063-instance_deployer.tf.j2', dest: '063-instance_deployer.tf' }
+        - { src: 'tf/064-instance_ceph.tf.j2', dest: '064-instance_ceph.tf' }
+        - { src: 'tf/100-inventory.tf.j2', dest: '100-inventory.tf' }
+        - { src: 'tf/100-inventory.tf.j2', dest: '100-inventory.tf' }
+        - { src: 'tf/101-ansible-vars.tf.j2', dest: '101-ansible-vars.tf' }

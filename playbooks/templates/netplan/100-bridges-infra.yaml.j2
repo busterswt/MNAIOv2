@@ -1,6 +1,25 @@
 network:
     version: 2
+    ethernets:
+        ens3:
+            set-name: ens3
+            match:
+              macaddress: {{ tf_ansible_ips.hosts[inventory_hostname].mgmt_mac }}
+        ens4:
+            set-name: ens4
+            match:
+              macaddress: {{ tf_ansible_ips.hosts[inventory_hostname].container_mac }}
     bridges:
-        br-mgmt:
-            dhcp4: true
+        br-host:
+            dhcp4: false
+            addresses:
+            - {{ tf_ansible_ips.hosts[inventory_hostname].mgmt_ip }}/{{ tf_ansible_mgmt_cidr | ansible.utils.ipaddr('prefix') }}
+            gateway4: {{ tf_ansible_mgmt_cidr | ansible.utils.ipaddr('net') | ansible.utils.ipaddr('1') | ansible.utils.ipaddr('address') }} 
             interfaces: [ ens3 ]
+            nameservers:
+              addresses: [{{ tf_ansible_mgmt_dns }}]
+        br-mgmt:
+            dhcp4: false
+            addresses:
+            - {{ tf_ansible_ips.hosts[inventory_hostname].container_ip }}/{{ tf_ansible_container_cidr | ansible.utils.ipaddr('prefix') }}
+            interfaces: [ ens4 ]

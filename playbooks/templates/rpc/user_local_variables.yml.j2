@@ -24,16 +24,16 @@ neutron_plugin_base:
 
 ## Keepalived ##
 haproxy_use_keepalived: True
-haproxy_keepalived_external_vip_cidr: "172.25.1.10/32"
-haproxy_keepalived_internal_vip_cidr: "172.25.1.11/32"
+haproxy_keepalived_external_vip_cidr: "10.240.0.10/32"
+haproxy_keepalived_internal_vip_cidr: "172.29.236.10/32"
 haproxy_keepalived_external_interface: br-mgmt
 haproxy_keepalived_internal_interface: br-mgmt
-haproxy_bind_external_lb_vip_address: 172.25.1.10
-haproxy_bind_internal_lb_vip_address: 172.25.1.11
+haproxy_bind_external_lb_vip_address: 10.240.0.10
+haproxy_bind_internal_lb_vip_address: 172.29.236.10
 
 ## Needed ##
 venv_wheel_build_enable: true
-galera_monitoring_allowed_source: 172.25.1.0/24
+galera_monitoring_allowed_source: 10.240.0.0/24
 designate_pool_uuid: ebde7ef0-5612-42e3-83df-7487cc0d251a
 
 octavia_neutron_management_network_name: lbaas-mgmt
@@ -50,4 +50,4 @@ neutron_provider_networks:
   network_vxlan_ranges: "1:1000"
   network_vlan_ranges: "physnet1"
   network_mappings: "physnet1:br-ex"
-  network_interface_mappings: "br-ex:ens5"
+  network_interface_mappings: "br-ex:ens7"

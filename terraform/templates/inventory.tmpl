@@ -7,19 +7,19 @@ ansible_ssh_private_key_file=${ keypath }
 
 [all]
 %{ for index, key in deployer_network ~}
-${ index }		ansible_host=${ key.address } fixed_ip=${ key.fixed_ip } long_hostname=${ deployer_nodes[index].name }
+${ index }		ansible_host=${ key.address } fixed_ip=${ key.fixed_ip } container_ip=${ deployer_container[index].fixed_ip[0].ip_address } long_hostname=${ deployer_nodes[index].name }
 %{ endfor ~}
 %{ for index, key in controller_network ~}
-${ index }		ansible_host=${ key.address } fixed_ip=${ key.fixed_ip } long_hostname=${ controller_nodes[index].name }
+${ index }		ansible_host=${ key.address } fixed_ip=${ key.fixed_ip } container_ip=${ controller_container[index].fixed_ip[0].ip_address } long_hostname=${ controller_nodes[index].name }
 %{ endfor ~}
 %{ for index, key in compute_network ~}
-${ index }		ansible_host=${ key.address } fixed_ip=${ key.fixed_ip } long_hostname=${ compute_nodes[index].name }
+${ index }		ansible_host=${ key.address } fixed_ip=${ key.fixed_ip } container_ip=${ compute_container[index].fixed_ip[0].ip_address } long_hostname=${ compute_nodes[index].name }
 %{ endfor ~}
 %{ for index, key in loadbalancer_network ~}
-${ index }		ansible_host=${ key.address } fixed_ip=${ key.fixed_ip } long_hostname=${ loadbalancer_nodes[index].name }
+${ index }		ansible_host=${ key.address } fixed_ip=${ key.fixed_ip } container_ip=${ loadbalancer_container[index].fixed_ip[0].ip_address } long_hostname=${ loadbalancer_nodes[index].name }
 %{ endfor ~}
 %{ for index, key in ceph_network ~}
-${ index }		ansible_host=${ key.address } fixed_ip=${ key.fixed_ip } long_hostname=${ ceph_nodes[index].name }
+${ index }		ansible_host=${ key.address } fixed_ip=${ key.fixed_ip } container_ip=${ ceph_container[index].fixed_ip[0].ip_address } long_hostname=${ ceph_nodes[index].name }
 %{ endfor ~}
 
 [deploy_hosts]

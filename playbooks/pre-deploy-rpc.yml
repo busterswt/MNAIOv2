@@ -20,6 +20,7 @@
   become: true
   vars_files:
   - vars/main.yml
+  - vars/terraform.yml
   tags:
     - deploy-osa
   tasks:

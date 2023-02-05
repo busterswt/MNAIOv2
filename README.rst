@@ -20,9 +20,9 @@ The deployed environment consists of the following:
 
 - 1x Deploy Node (4 vCPUs, 4 GB RAM, 20 GB Disk)
 - 2x Load Balancers (4 vCPUs, 4 GB RAM, 20 GB Disk)
-- 3x Controllers (12 vCPUs, 32 GB RAM, 60 GB Disk)
+- 3x Controllers (8 vCPUs, 16 GB RAM, 20 GB Disk)
 - 3x Computes (8 vCPUs, 16 GB RAM, 40 GB Disk)
-- 3x Ceph (4 vCPUs, 8 GB RAM, 40 GB Disk + 3x 10GB OSDs)
+- 3x Ceph (4 vCPUs, 8 GB RAM, 20 GB Disk + 3x 10GB OSDs)
 
 The script(s) will build and deploy OpenStack across multiple virtual
 instances, and is customizable using standard OpenStack-Ansible
@@ -36,9 +36,9 @@ Installation
 The OpenStack (under)cloud must have the resources available to support the instance
 flavors noted above:
 
-- 84 vCPU
-- 180 GB RAM
-- 480 GB Disk
+- 72 vCPU
+- 132 GB RAM
+- 260 GB Disk
 - 90 GB Disk (via Cinder)
 
 Download this repository to your local workstation or to a machine that

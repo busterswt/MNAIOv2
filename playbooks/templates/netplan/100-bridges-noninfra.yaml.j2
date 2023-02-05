@@ -1,12 +1,47 @@
 network:
     version: 2
+    ethernets:
+        ens3:
+            set-name: ens3
+            match:
+              macaddress: {{ tf_ansible_ips.hosts[inventory_hostname].mgmt_mac }}
+        ens4:
+            set-name: ens4
+            match:
+              macaddress: {{ tf_ansible_ips.hosts[inventory_hostname].container_mac }}
+        ens5:
+            set-name: ens5
+            match:
+              macaddress: {{ tf_ansible_ips.hosts[inventory_hostname].overlay_mac }}
+        ens6:
+            set-name: ens6
+            match:
+              macaddress: {{ tf_ansible_ips.hosts[inventory_hostname].storage_mac }}
+        ens7:
+            set-name: ens7
+            match:
+              macaddress: {{ tf_ansible_ips.hosts[inventory_hostname].provider_mac }}
     bridges:
-        br-mgmt:
-            dhcp4: true
+        br-host:
+            dhcp4: false
+            addresses:
+            - {{ tf_ansible_ips.hosts[inventory_hostname].mgmt_ip }}/{{ tf_ansible_mgmt_cidr | ansible.utils.ipaddr('prefix') }}
+            gateway4: {{ tf_ansible_mgmt_cidr | ansible.utils.ipaddr('net') | ansible.utils.ipaddr('1') | ansible.utils.ipaddr('address') }}
             interfaces: [ ens3 ]
+            nameservers:
+              addresses: [{{ tf_ansible_mgmt_dns }}]
+        br-mgmt:
+            dhcp4: false
+            addresses:
+            - {{ tf_ansible_ips.hosts[inventory_hostname].container_ip }}/{{ tf_ansible_container_cidr | ansible.utils.ipaddr('prefix') }}
+            interfaces: [ ens4 ]
         br-overlay:
-            dhcp4: true
-            interfaces: [ ens4 ] 
+            dhcp4: false
+            addresses:
+            - {{ tf_ansible_ips.hosts[inventory_hostname].overlay_ip }}/{{ tf_ansible_overlay_cidr | ansible.utils.ipaddr('prefix') }}
+            interfaces: [ ens5 ] 
         br-storage:
-            dhcp4: true
-            interfaces: [ ens5 ]
+            dhcp4: false
+            addresses:
+            - {{ tf_ansible_ips.hosts[inventory_hostname].storage_ip }}/{{ tf_ansible_overlay_cidr | ansible.utils.ipaddr('prefix') }}
+            interfaces: [ ens6 ]

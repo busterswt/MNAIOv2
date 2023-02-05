@@ -12,6 +12,9 @@ resource "openstack_compute_instance_v2" "loadbalancer" {
   network {
     port = openstack_networking_port_v2.loadbalancer-mgmt[each.key].id
   }
+  network {
+    port = openstack_networking_port_v2.loadbalancer-container[each.key].id
+  }
 
   depends_on = [ openstack_images_image_v2.osa-mnaio-image ]
 }
@@ -22,6 +25,7 @@ resource "openstack_networking_port_v2" "loadbalancer-mgmt" {
   name           = "${join("-",["${random_pet.pet_name.id}","mgmt","${each.key}"])}"
   network_id     = openstack_networking_network_v2.mnaio-management.id
   admin_state_up = true
+  mac_address = macaddress.loadbalancer_mgmt_macaddr[each.key].address
   no_security_groups = true
   port_security_enabled = false
   fixed_ip {
@@ -30,7 +34,23 @@ resource "openstack_networking_port_v2" "loadbalancer-mgmt" {
   }
 }
 
+resource "openstack_networking_port_v2" "loadbalancer-container" {
+  for_each       = local.loadbalancer_nodes
+  name           = "${join("-",["${random_pet.pet_name.id}","container","${each.key}"])}"
+  network_id     = openstack_networking_network_v2.mnaio-container.id
+  admin_state_up = true
+  mac_address = macaddress.loadbalancer_container_macaddr[each.key].address
+  no_security_groups = true
+  port_security_enabled = false
+  fixed_ip {
+    ip_address = each.value.container_addr
+    subnet_id = openstack_networking_subnet_v2.mnaio-container.id
+  }
+}
+
+######################
 #### Floating IPs ####
+######################
 
 resource "openstack_networking_floatingip_v2" "loadbalancer_floating_ip_mgmt" {
   pool         = var.external_network["name"]
@@ -44,4 +64,21 @@ resource "openstack_compute_floatingip_associate_v2" "loadbalancer_fip_associate
   fixed_ip        = "${openstack_compute_instance_v2.loadbalancer[each.key].network.0.fixed_ip_v4}"
 
   depends_on = [ openstack_networking_router_interface_v2.router-interface-mgmt ]
+}
+
+#######################
+#### MAC Addresses ####
+#######################
+
+# We're creating MAC addresses here so we can use them for port creation
+# and netplan interface configuration
+
+resource "macaddress" "loadbalancer_mgmt_macaddr" {
+  for_each    = local.loadbalancer_nodes
+  prefix      = [00, 23, 62]
+}
+
+resource "macaddress" "loadbalancer_container_macaddr" {
+  for_each    = local.loadbalancer_nodes
+  prefix      = [00, 23, 62]
 }

@@ -35,6 +35,22 @@ resource "openstack_networking_router_interface_v2" "router-interface-mgmt" {
   subnet_id = "${openstack_networking_subnet_v2.mnaio-management.id}"
 }
 
+#################################
+#### MNAIO CONTAINER NETWORK ####
+#################################
+
+resource "openstack_networking_network_v2" "mnaio-container" {
+  name = "${join("-",["${random_pet.pet_name.id}","mnaio-container"])}"
+}
+
+resource "openstack_networking_subnet_v2" "mnaio-container" {
+  name            = "${join("-",["${random_pet.pet_name.id}","${var.network_container["subnet_name"]}"])}"
+  network_id      = openstack_networking_network_v2.mnaio-container.id
+  cidr            = var.network_container["cidr"]
+  dns_nameservers = var.dns_ip
+  no_gateway      = true
+}
+
 ###############################
 #### MNAIO OVERLAY NETWORK ####
 ###############################

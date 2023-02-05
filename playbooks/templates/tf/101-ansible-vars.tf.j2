@@ -2,17 +2,25 @@ resource "local_file" "ansible_vars" {
   content = templatefile("${path.module}/templates/ansible-vars.tmpl",
     {
       controller-mgmt           = openstack_networking_port_v2.controller-mgmt
+      controller-container      = openstack_networking_port_v2.controller-container
       controller-overlay        = openstack_networking_port_v2.controller-overlay
       controller-storage        = openstack_networking_port_v2.controller-storage
+      controller-provider       = openstack_networking_port_v2.controller-provider
       compute-mgmt              = openstack_networking_port_v2.compute-mgmt
+      compute-container         = openstack_networking_port_v2.compute-container
       compute-overlay           = openstack_networking_port_v2.compute-overlay
       compute-storage           = openstack_networking_port_v2.compute-storage
+      compute-provider          = openstack_networking_port_v2.compute-provider
       loadbalancer-mgmt         = openstack_networking_port_v2.loadbalancer-mgmt
+      loadbalancer-container    = openstack_networking_port_v2.loadbalancer-container
       deployer-mgmt             = openstack_networking_port_v2.deployer-mgmt
+      deployer-container        = openstack_networking_port_v2.deployer-container
       ceph-mgmt                 = openstack_networking_port_v2.ceph-mgmt
+      ceph-container            = openstack_networking_port_v2.ceph-container
       ceph-storage              = openstack_networking_port_v2.ceph-storage
       ceph-replication          = openstack_networking_port_v2.ceph-replication
       subnet-mgmt               = openstack_networking_subnet_v2.mnaio-management
+      subnet-container          = openstack_networking_subnet_v2.mnaio-container
       subnet-overlay            = openstack_networking_subnet_v2.mnaio-overlay
       subnet-storage            = openstack_networking_subnet_v2.mnaio-storage
       subnet-replication        = openstack_networking_subnet_v2.mnaio-replication

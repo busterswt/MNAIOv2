@@ -3,14 +3,19 @@ resource "local_file" "ansible_inventory" {
     {
       controller_nodes = openstack_compute_instance_v2.controller
       controller_network = openstack_networking_floatingip_v2.controller_floating_ip_mgmt
+      controller_container = openstack_networking_port_v2.controller-container
       compute_nodes = openstack_compute_instance_v2.compute
       compute_network = openstack_networking_floatingip_v2.compute_floating_ip_mgmt
+      compute_container = openstack_networking_port_v2.compute-container
       loadbalancer_nodes = openstack_compute_instance_v2.loadbalancer
       loadbalancer_network = openstack_networking_floatingip_v2.loadbalancer_floating_ip_mgmt
+      loadbalancer_container = openstack_networking_port_v2.loadbalancer-container
       deployer_nodes = openstack_compute_instance_v2.deployer
       deployer_network = openstack_networking_floatingip_v2.deployer_floating_ip_mgmt
+      deployer_container = openstack_networking_port_v2.deployer-container
       ceph_nodes = openstack_compute_instance_v2.ceph
       ceph_network = openstack_networking_floatingip_v2.ceph_floating_ip_mgmt
+      ceph_container = openstack_networking_port_v2.ceph-container
       keypath = abspath("${path.module}/../id_rsa_mnaio.key")
     }
   )

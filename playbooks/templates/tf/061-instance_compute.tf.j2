@@ -13,6 +13,9 @@ resource "openstack_compute_instance_v2" "compute" {
     port = openstack_networking_port_v2.compute-mgmt[each.key].id
   }
   network {
+    port = openstack_networking_port_v2.compute-container[each.key].id
+  }
+  network {
     port = openstack_networking_port_v2.compute-overlay[each.key].id
   }
   network {
@@ -31,6 +34,7 @@ resource "openstack_networking_port_v2" "compute-mgmt" {
   name           = "${join("-",["${random_pet.pet_name.id}","mgmt","${each.key}"])}"
   network_id     = openstack_networking_network_v2.mnaio-management.id
   admin_state_up = true
+  mac_address = macaddress.compute_mgmt_macaddr[each.key].address
   security_group_ids = [
     openstack_networking_secgroup_v2.secgrp-mnaio.id
   ]
@@ -40,11 +44,26 @@ resource "openstack_networking_port_v2" "compute-mgmt" {
   }
 }
 
+resource "openstack_networking_port_v2" "compute-container" {
+  for_each       = local.compute_nodes
+  name           = "${join("-",["${random_pet.pet_name.id}","container","${each.key}"])}"
+  network_id     = openstack_networking_network_v2.mnaio-container.id
+  admin_state_up = true
+  mac_address = macaddress.compute_container_macaddr[each.key].address
+  no_security_groups = true
+  port_security_enabled = false
+  fixed_ip {
+    ip_address = each.value.container_addr
+    subnet_id = openstack_networking_subnet_v2.mnaio-container.id
+  }
+}
+
 resource "openstack_networking_port_v2" "compute-overlay" {
   for_each       = local.compute_nodes
   name           = "${join("-",["${random_pet.pet_name.id}","overlay","${each.key}"])}"
   network_id     = openstack_networking_network_v2.mnaio-overlay.id
   admin_state_up = true
+  mac_address = macaddress.compute_overlay_macaddr[each.key].address
   security_group_ids = [
     openstack_networking_secgroup_v2.secgrp-mnaio.id
   ]
@@ -59,6 +78,7 @@ resource "openstack_networking_port_v2" "compute-storage" {
   name           = "${join("-",["${random_pet.pet_name.id}","storage","${each.key}"])}"
   network_id     = openstack_networking_network_v2.mnaio-storage.id
   admin_state_up = true
+  mac_address = macaddress.compute_storage_macaddr[each.key].address
   security_group_ids = [
     openstack_networking_secgroup_v2.secgrp-mnaio.id
   ]
@@ -73,6 +93,7 @@ resource "openstack_networking_port_v2" "compute-provider" {
   name           = "${join("-",["${random_pet.pet_name.id}","provider","${each.key}"])}"
   network_id     = openstack_networking_network_v2.mnaio-provider-ext.id
   admin_state_up = true
+  mac_address = macaddress.compute_provider_macaddr[each.key].address
   no_security_groups = true
   port_security_enabled = false
   fixed_ip {
@@ -81,7 +102,9 @@ resource "openstack_networking_port_v2" "compute-provider" {
   }
 }
 
+######################
 #### Floating IPs ####
+######################
 
 resource "openstack_networking_floatingip_v2" "compute_floating_ip_mgmt" {
   pool         = var.external_network["name"]
@@ -95,4 +118,36 @@ resource "openstack_compute_floatingip_associate_v2" "compute_fip_associate_mgmt
   fixed_ip        = "${openstack_compute_instance_v2.compute[each.key].network.0.fixed_ip_v4}"
 
   depends_on = [ openstack_networking_router_interface_v2.router-interface-mgmt ]
+}
+
+#######################
+#### MAC Addresses ####
+#######################
+
+# We're creating MAC addresses here so we can use them for port creation
+# and netplan interface configuration
+
+resource "macaddress" "compute_mgmt_macaddr" {
+  for_each    = local.compute_nodes
+  prefix      = [00, 23, 62]
+}
+
+resource "macaddress" "compute_container_macaddr" {
+  for_each    = local.compute_nodes
+  prefix      = [00, 23, 62]
+}
+
+resource "macaddress" "compute_overlay_macaddr" {
+  for_each    = local.compute_nodes
+  prefix      = [00, 23, 62]
+}
+
+resource "macaddress" "compute_storage_macaddr" {
+  for_each    = local.compute_nodes
+  prefix      = [00, 23, 62]
+}
+
+resource "macaddress" "compute_provider_macaddr" {
+  for_each    = local.compute_nodes
+  prefix      = [00, 23, 62]
 }

@@ -1,12 +1,15 @@
 network:
     version: 2
     bridges:
-        br-mgmt:
+        br-host:
             dhcp4: true
             interfaces: [ ens3 ]
-        br-storage:
+        br-mgmt:
             dhcp4: true
             interfaces: [ ens4 ]
-        br-repl:
+        br-storage:
             dhcp4: true
             interfaces: [ ens5 ]
+        br-repl:
+            dhcp4: true
+            interfaces: [ ens6 ]

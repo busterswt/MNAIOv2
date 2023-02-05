@@ -27,8 +27,8 @@
         line: '{{ item }}'
         create: yes
       with_items:
-        - '172.25.1.11 internalapi.rsprivatecloud.net'
-        - '172.25.1.10 publicapi.rsprivatecloud.net'
+        - '172.29.236.10 internalapi.rsprivatecloud.net'
+        - '172.29.236.11 publicapi.rsprivatecloud.net'
 
 - name: Setup RPC Deployment
   hosts: deploy_hosts

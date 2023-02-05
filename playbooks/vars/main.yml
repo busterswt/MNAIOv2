@@ -45,7 +45,7 @@ mnaio_flavors:
     disk: 20
   controller:
     cpu: 8
-    ram: 16384
+    ram: 24576
     disk: 20
   compute:
     cpu: 8

@@ -13,6 +13,9 @@ resource "openstack_compute_instance_v2" "ceph" {
     port = openstack_networking_port_v2.ceph-mgmt[each.key].id
   }
   network {
+    port = openstack_networking_port_v2.ceph-container[each.key].id
+  }
+  network {
     port = openstack_networking_port_v2.ceph-storage[each.key].id
   }
   network {
@@ -27,6 +30,7 @@ resource "openstack_networking_port_v2" "ceph-mgmt" {
   name           = "${join("-",["${random_pet.pet_name.id}","mgmt","${each.key}"])}"
   network_id     = openstack_networking_network_v2.mnaio-management.id
   admin_state_up = true
+  mac_address = macaddress.ceph_mgmt_macaddr[each.key].address
   security_group_ids = [
     openstack_networking_secgroup_v2.secgrp-mnaio.id
   ]
@@ -36,11 +40,26 @@ resource "openstack_networking_port_v2" "ceph-mgmt" {
   }
 }
 
+resource "openstack_networking_port_v2" "ceph-container" {
+  for_each       = local.ceph_nodes
+  name           = "${join("-",["${random_pet.pet_name.id}","container","${each.key}"])}"
+  network_id     = openstack_networking_network_v2.mnaio-container.id
+  admin_state_up = true
+  mac_address = macaddress.ceph_container_macaddr[each.key].address
+  no_security_groups = true
+  port_security_enabled = false
+  fixed_ip {
+    ip_address = each.value.container_addr
+    subnet_id = openstack_networking_subnet_v2.mnaio-container.id
+  }
+}
+
 resource "openstack_networking_port_v2" "ceph-storage" {
   for_each       = local.ceph_nodes
   name           = "${join("-",["${random_pet.pet_name.id}","storage","${each.key}"])}"
   network_id     = openstack_networking_network_v2.mnaio-storage.id
   admin_state_up = true
+  mac_address = macaddress.ceph_storage_macaddr[each.key].address
   no_security_groups = true
   port_security_enabled = false
   fixed_ip {
@@ -54,6 +73,7 @@ resource "openstack_networking_port_v2" "ceph-replication" {
   name           = "${join("-",["${random_pet.pet_name.id}","replication","${each.key}"])}"
   network_id     = openstack_networking_network_v2.mnaio-replication.id
   admin_state_up = true
+  mac_address = macaddress.ceph_replication_macaddr[each.key].address
   no_security_groups = true
   port_security_enabled = false
   fixed_ip {
@@ -125,4 +145,31 @@ resource "openstack_compute_volume_attach_v2" "attachments_2" {
   for_each    = local.ceph_nodes
   instance_id = openstack_compute_instance_v2.ceph[each.key].id
   volume_id   = "${openstack_blockstorage_volume_v3.volumes_2[each.key].id}"
+}
+
+#######################
+#### MAC Addresses ####
+#######################
+
+# We're creating MAC addresses here so we can use them for port creation
+# and netplan interface configuration
+
+resource "macaddress" "ceph_mgmt_macaddr" {
+  for_each    = local.ceph_nodes
+  prefix      = [00, 23, 62]
+}
+
+resource "macaddress" "ceph_container_macaddr" {
+  for_each    = local.ceph_nodes
+  prefix      = [00, 23, 62]
+}
+
+resource "macaddress" "ceph_storage_macaddr" {
+  for_each    = local.ceph_nodes
+  prefix      = [00, 23, 62]
+}
+
+resource "macaddress" "ceph_replication_macaddr" {
+  for_each    = local.ceph_nodes
+  prefix      = [00, 23, 62]
 }

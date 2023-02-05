@@ -1,35 +1,59 @@
 ---
 # IP addresses for the hosts under management
 tf_ansible_ips:
+  hosts:
 %{ for host, key in controller-mgmt ~}
-  - host: ${ host }
-    mgmt_ip: ${ controller-mgmt[host].fixed_ip[0].ip_address }
-    overlay_ip: ${ controller-overlay[host].fixed_ip[0].ip_address }
-    storage_ip: ${ controller-storage[host].fixed_ip[0].ip_address }
+    ${ host }:
+      mgmt_ip: ${ controller-mgmt[host].fixed_ip[0].ip_address }
+      mgmt_mac: ${ controller-mgmt[host].mac_address }
+      container_ip: ${ controller-container[host].fixed_ip[0].ip_address }
+      container_mac: ${ controller-container[host].mac_address }
+      overlay_ip: ${ controller-overlay[host].fixed_ip[0].ip_address }
+      overlay_mac: ${ controller-overlay[host].mac_address }
+      storage_ip: ${ controller-storage[host].fixed_ip[0].ip_address }
+      storage_mac: ${ controller-storage[host].mac_address }
+      provider_mac: ${ controller-provider[host].mac_address }
 %{ endfor ~}
 %{ for host, key in compute-mgmt ~}
-  - host: ${ host }
-    mgmt_ip: ${ compute-mgmt[host].fixed_ip[0].ip_address }
-    overlay_ip: ${ compute-overlay[host].fixed_ip[0].ip_address }
-    storage_ip: ${ compute-storage[host].fixed_ip[0].ip_address }
+    ${ host }:
+      mgmt_ip: ${ compute-mgmt[host].fixed_ip[0].ip_address }
+      mgmt_mac: ${ compute-mgmt[host].mac_address }
+      container_ip: ${ compute-container[host].fixed_ip[0].ip_address }
+      container_mac: ${ compute-container[host].mac_address }
+      overlay_ip: ${ compute-overlay[host].fixed_ip[0].ip_address }
+      overlay_mac: ${ compute-overlay[host].mac_address }
+      storage_ip: ${ compute-storage[host].fixed_ip[0].ip_address }
+      storage_mac: ${ compute-storage[host].mac_address }
+      provider_mac: ${ compute-provider[host].mac_address }
 %{ endfor ~}
 %{ for host, key in loadbalancer-mgmt ~}
-  - host: ${ host }
-    mgmt_ip: ${ loadbalancer-mgmt[host].fixed_ip[0].ip_address }
+    ${ host }:
+      mgmt_ip: ${ loadbalancer-mgmt[host].fixed_ip[0].ip_address }
+      mgmt_mac: ${ loadbalancer-mgmt[host].mac_address }
+      container_ip: ${ loadbalancer-container[host].fixed_ip[0].ip_address }
+      container_mac: ${ loadbalancer-container[host].mac_address }
 %{ endfor ~}
 %{ for host, key in deployer-mgmt ~}
-  - host: ${ host }
-    mgmt_ip: ${ deployer-mgmt[host].fixed_ip[0].ip_address }
+    ${ host }:
+      mgmt_ip: ${ deployer-mgmt[host].fixed_ip[0].ip_address }
+      mgmt_mac: ${ deployer-mgmt[host].mac_address }
+      container_ip: ${ deployer-container[host].fixed_ip[0].ip_address }
+      container_mac: ${ deployer-container[host].mac_address }
 %{ endfor ~}
 %{ for host, key in ceph-mgmt ~}
-  - host: ${ host }
-    mgmt_ip: ${ ceph-mgmt[host].fixed_ip[0].ip_address }
-    storage_ip: ${ ceph-storage[host].fixed_ip[0].ip_address }
-    replication_ip: ${ ceph-storage[host].fixed_ip[0].ip_address }
+    ${ host }:
+      mgmt_ip: ${ ceph-mgmt[host].fixed_ip[0].ip_address }
+      container_ip: ${ ceph-container[host].fixed_ip[0].ip_address }
+      storage_ip: ${ ceph-storage[host].fixed_ip[0].ip_address }
+      replication_ip: ${ ceph-storage[host].fixed_ip[0].ip_address }
 %{ endfor ~}
 
 # Subnets
 tf_ansible_mgmt_cidr: ${ subnet-mgmt.cidr }
+tf_ansible_container_cidr: ${ subnet-container.cidr }
 tf_ansible_overlay_cidr: ${ subnet-overlay.cidr }
 tf_ansible_storage_cidr: ${ subnet-storage.cidr }
 tf_ansible_replication_cidr: ${ subnet-replication.cidr }
+
+# DNS
+tf_ansible_mgmt_dns: ${ subnet-mgmt.dns_nameservers[0] }

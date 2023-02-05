@@ -87,20 +87,23 @@
   gather_facts: false
   any_errors_fatal: true
   become: true
+  vars_files:
+  - vars/main.yml
+  - vars/terraform.yml
   tasks:
     - name: Drop bridge templates on non-infra
-      blockinfile:
-        path: /etc/netplan/50-cloud-init.yaml
-        block: "{{ lookup('file', '{{ playbook_dir }}/templates/netplan/100-bridges-noninfra.yaml.j2') }}"
+      template:
+        src: "{{ playbook_dir }}/templates/netplan/100-bridges-noninfra.yaml.j2"
+        dest: /etc/netplan/50-cloud-init.yaml
       notify:
         - apply netplan
       when:
         - ('controller_hosts' in group_names) or ('compute_hosts' in group_names)
 
     - name: Drop bridge templates on infra
-      blockinfile:
-        path: /etc/netplan/50-cloud-init.yaml
-        block: "{{ lookup('file', '{{ playbook_dir }}/templates/netplan/100-bridges-infra.yaml.j2') }}"
+      template:
+        src: "{{ playbook_dir }}/templates/netplan/100-bridges-infra.yaml.j2"
+        dest: /etc/netplan/50-cloud-init.yaml
       notify:
         - apply netplan
       when:

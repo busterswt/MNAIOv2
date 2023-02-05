@@ -2,35 +2,35 @@
 
 resource "openstack_compute_flavor_v2" "osa-mnaio-controller-flavor" {
   name  = "${join("-",["${random_pet.pet_name.id}","osa-mnaio-controller"])}"
-  ram   = "32768"
-  vcpus = "12"
-  disk  = "60"
+  ram   = "{{ mnaio_flavors['controller'].ram }}"
+  vcpus = "{{ mnaio_flavors['controller'].cpu }}"
+  disk  = "{{ mnaio_flavors['controller'].disk }}"
 }
 
 resource "openstack_compute_flavor_v2" "osa-mnaio-compute-flavor" {
   name  = "${join("-",["${random_pet.pet_name.id}","osa-mnaio-compute"])}"
-  ram   = "16384"
-  vcpus = "8"
-  disk  = "40"
+  ram   = "{{ mnaio_flavors['compute'].ram }}"
+  vcpus = "{{ mnaio_flavors['compute'].cpu }}"
+  disk  = "{{ mnaio_flavors['compute'].disk }}"
 }
 
 resource "openstack_compute_flavor_v2" "osa-mnaio-loadbalancer-flavor" {
   name  = "${join("-",["${random_pet.pet_name.id}","osa-mnaio-lb"])}"
-  ram   = "4096"
-  vcpus = "4"
-  disk  = "20"
+  ram   = "{{ mnaio_flavors['loadbalancer'].ram }}"
+  vcpus = "{{ mnaio_flavors['loadbalancer'].cpu }}"
+  disk  = "{{ mnaio_flavors['loadbalancer'].disk }}"
 }
 
 resource "openstack_compute_flavor_v2" "osa-mnaio-deployer-flavor" {
   name  = "${join("-",["${random_pet.pet_name.id}","osa-mnaio-deploy"])}"
-  ram   = "4096"
-  vcpus = "4"
-  disk  = "20"
+  ram   = "{{ mnaio_flavors['deployer'].ram }}"
+  vcpus = "{{ mnaio_flavors['deployer'].cpu }}"
+  disk  = "{{ mnaio_flavors['deployer'].disk }}"
 }
 
 resource "openstack_compute_flavor_v2" "osa-mnaio-ceph-flavor" {
   name  = "${join("-",["${random_pet.pet_name.id}","osa-mnaio-ceph"])}"
-  ram   = "8192"
-  vcpus = "4"
-  disk  = "40"
+  ram   = "{{ mnaio_flavors['ceph'].ram }}"
+  vcpus = "{{ mnaio_flavors['ceph'].cpu }}"
+  disk  = "{{ mnaio_flavors['ceph'].disk }}"
 }

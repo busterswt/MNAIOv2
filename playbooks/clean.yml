@@ -43,6 +43,7 @@
         path: "{{ item }}"
         state: absent
       with_items:
+        - "{{ playbook_dir }}/../terraform/000-variables.tf"
         - "{{ playbook_dir }}/../terraform/040-flavor.tf"
         - "{{ playbook_dir }}/../terraform/050-image.tf"
         - "{{ playbook_dir }}/../terraform/060-instance_controller.tf"

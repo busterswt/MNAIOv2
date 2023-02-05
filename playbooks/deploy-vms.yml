@@ -17,6 +17,7 @@
   hosts: localhost
   environment: "{{ deployment_environment_variables | default({}) }}"
   vars_files:
+  - defaults/main.yml
   - vars/main.yml
   tags:
     - deploy-vms

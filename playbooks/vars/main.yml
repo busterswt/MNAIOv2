@@ -27,8 +27,8 @@ images:
 osa_neutron_plugin: ml2.ovn
 
 #### Keepalived/HAproxy ####
-internal_lb_vip_address: 172.29.236.10
-external_lb_vip_address: 172.29.236.11
+#internal_lb_vip_address: 172.29.236.10
+#external_lb_vip_address: 172.29.236.11
 
 #################
 #### Flavors ####
@@ -38,28 +38,28 @@ external_lb_vip_address: 172.29.236.11
 # generation, and can be overridden by end users. The disk sizes specified
 # will be used for volume creation (if applicable).
 
-mnaio_flavors:
-  deployer:
-    cpu: 4
-    ram: 4096
-    disk: 20
-  controller:
-    cpu: 8
-    ram: 24576
-    disk: 20
-  compute:
-    cpu: 8
-    ram: 16384
-    disk: 40
-  loadbalancer:
-    cpu: 4
-    ram: 4096
-    disk: 20
-  ceph:
-    cpu: 4
-    ram: 8192
-    disk: 20
-    osd: 10
+#mnaio_flavors:
+#  deployer:
+#    cpu: 4
+#    ram: 4096
+#    disk: 20
+#  controller:
+#    cpu: 8
+#    ram: 24576
+#    disk: 20
+#  compute:
+#    cpu: 8
+#    ram: 16384
+#    disk: 40
+#  loadbalancer:
+#    cpu: 4
+#    ram: 4096
+#    disk: 20
+#  ceph:
+#    cpu: 4
+#    ram: 8192
+#    disk: 20
+#    osd: 10
 
 #### Less Common ####
 default_container_tech: lxc

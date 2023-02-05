@@ -18,6 +18,7 @@
   gather_facts: true
   become: true
   vars_files:
+  - defaults/main.yml
   - vars/main.yml
   tasks:
     - name: Ensure host entries for API endpoints
@@ -36,6 +37,7 @@
   environment: "{{ deployment_environment_variables | default({}) }}"
   become: true
   vars_files:
+  - defaults/main.yml
   - vars/main.yml
   tags:
     - deploy-osa

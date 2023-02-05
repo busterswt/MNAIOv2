@@ -4,11 +4,11 @@
 resource "openstack_compute_instance_v2" "deployer" {
   for_each    = local.deployer_nodes
   name        = "${join("-",["${random_pet.pet_name.id}","${each.key}"])}"
-  image_id    = {% if osa_vm_image_uuid == "" %}openstack_images_image_v2.osa-mnaio-image.id{% else %}{{ osa_vm_image_uuid }}{% endif %}{{''}}
+  image_id    = {% if mnaio_deployment.deployer.image_uuid == "" %}openstack_images_image_v2.osa-mnaio-image.id{% else %}"{{ mnaio_deployment.deployer.image_uuid }}"{% endif %}{{''}}
   flavor_id   = openstack_compute_flavor_v2.osa-mnaio-deployer-flavor.id
   key_pair    = openstack_compute_keypair_v2.user_key.name
   user_data   = file("scripts/cloud-init.yaml")
-  config_drive = false
+  config_drive = {{ mnaio_deployment.deployer.config_drive | lower }}
   network {
     port = openstack_networking_port_v2.deployer-mgmt[each.key].id
   }

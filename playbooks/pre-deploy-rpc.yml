@@ -19,6 +19,7 @@
   environment: "{{ deployment_environment_variables | default({}) }}"
   become: true
   vars_files:
+  - defaults/main.yml
   - vars/main.yml
   - vars/terraform.yml
   tags:

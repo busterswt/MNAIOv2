@@ -19,6 +19,7 @@
   gather_facts: false
   any_errors_fatal: true
   vars_files:
+    - defaults/main.yml
     - vars/main.yml
   tasks:
     - name: Create images directory
@@ -36,6 +37,19 @@
       shell: "curl --silent {{ images[osa_vm_image].sha256file }} | grep {{ images[osa_vm_image].filename }} | awk '{print $1}'"
       register: sha256sum_image
 
+    - name: Create list of override image UUIDs
+      set_fact:
+        _image_list: "{{ _image_list | default([]) + [item.value.image_uuid] }}"
+      loop: "{{ mnaio_deployment | dict2items }}"
+
+    - name: Cull the image list
+      set_fact:
+        image_list: "{{ _image_list | select() }}"
+
+    - name: show size
+      debug:
+        msg: "env: {{ mnaio_deployment | length }}, image: {{ image_list | length }}"
+
     - name: Download image to local directory, if doesn't exist
       ansible.builtin.get_url:
         url: "{{ images[osa_vm_image].url }}"
@@ -43,7 +57,8 @@
         checksum: "sha256:{{ sha256sum_image.stdout }}"
         mode: '0440'
       when:
-        - osa_vm_image_uuid == ""
+#        - osa_vm_image_uuid == ""
+        - (image_list|length) < (mnaio_deployment|length)
         - not file_stat_var.stat.exists
 
     - name: Drop Terraform image file
@@ -53,4 +68,5 @@
         mode: "0644"
       vars:
         - image: "{{ images[osa_vm_image] }}"          
-      when: osa_vm_image_uuid == ""
+#      when: osa_vm_image_uuid == ""
+      when: image_list|length < mnaio_deployment|length

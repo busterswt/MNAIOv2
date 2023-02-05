@@ -20,6 +20,7 @@
   any_errors_fatal: true
   vars_files:
     - vars/main.yml
+    - defaults/main.yml
   tasks:
     - name: Generate Terraform files
       template:
@@ -27,6 +28,7 @@
         dest: "{{ playbook_dir }}/../terraform/{{ item.dest }}"
         mode: "0644"
       with_items:
+        - { src: 'tf/000-variables.tf.j2', dest: '000-variables.tf' }
         - { src: 'tf/040-flavor.tf.j2', dest: '040-flavor.tf' }
         - { src: 'tf/060-instance_controller.tf.j2', dest: '060-instance_controller.tf' }
         - { src: 'tf/061-instance_compute.tf.j2', dest: '061-instance_compute.tf' }

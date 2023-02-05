@@ -1,7 +1,7 @@
 
 OpenStack-Ansible Multi-Node All-in-One (MNAIO) v2
 ##################################################
-:date: 2023-01-25
+:date: 2023-02-05
 :tags: mnaio, rackspace, openstack, ansible, openstack-ansible
 
 About this repository
@@ -20,13 +20,13 @@ The deployed environment consists of the following:
 
 - 1x Deploy Node (4 vCPUs, 4 GB RAM, 20 GB Disk)
 - 2x Load Balancers (4 vCPUs, 4 GB RAM, 20 GB Disk)
-- 3x Controllers (8 vCPUs, 16 GB RAM, 20 GB Disk)
+- 3x Controllers (8 vCPUs, 24 GB RAM, 20 GB Disk)
 - 3x Computes (8 vCPUs, 16 GB RAM, 40 GB Disk)
 - 3x Ceph (4 vCPUs, 8 GB RAM, 20 GB Disk + 3x 10GB OSDs)
 
-The script(s) will build and deploy OpenStack across multiple virtual
-instances, and is customizable using standard OpenStack-Ansible
-mechanisms.
+These defaults can be adjusted, including the number of deployed nodes. The script(s)
+will build and deploy OpenStack across multiple virtual instances, and is customizable
+using standard OpenStack-Ansible override mechanisms.
 
 **Ensure quotas allow such resource utilization!**
 
@@ -37,7 +37,7 @@ The OpenStack (under)cloud must have the resources available to support the inst
 flavors noted above:
 
 - 72 vCPU
-- 132 GB RAM
+- 156 GB RAM
 - 260 GB Disk
 - 90 GB Disk (via Cinder)
 
@@ -95,8 +95,9 @@ attributes:
 - OpenStack-Ansible (`master` branch)
 - Neutron ML2/OVS
 
-All overrides can be set using environment variables prior to executing the
-build.
+Overrides can be set in `overrides.yml`, which will be read in by Ansible to
+override default values. Other  overrides can be set using environment variables
+prior to executing the build, but this will be deprecated in most cases.
 
 ``build.sh`` Options
 ====================
@@ -146,9 +147,6 @@ Set the Neutron plugin (options: ml2.ovs,ml2.ovn)
 
 Set the instance image type for automatic download (options: focal,jammy)
   ``export MNAIO_OSA_VM_IMAGE="${MNAIO_OSA_VM_IMAGE:-focal}"``
-
-Set the image UUID (for existing cloud images) - NOTE: Overrides MNAIO_OSA_VM_IMAGE
-  ``export MNAIO_OSA_VM_IMAGE_UUID=<Existing Glance Image UUID>``
 
 Set the deployment to metal versus containers
   ``export MNAIO_OSA_NO_CONTAINERS="${MNAIO_OSA_NO_CONTAINERS:-true}"``

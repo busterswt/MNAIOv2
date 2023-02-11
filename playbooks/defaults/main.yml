@@ -1,0 +1,82 @@
+---
+#################################
+#### Virtual Machine Details ####
+#################################
+
+# An MNAIO v2 deployment consists of multiple virtual machines of various sizing.
+# These can be overridden by copying the enture 'mnaio_deployment' block to
+# overrides.yml and customizing, if desired. By specifying 'flavor_uuid' and/or
+# 'image_uuid', you are triggering the machines to be built using pre-existing
+# OpenStack resources. Otherwise, custom flavors and/or images will be created
+# (requires admin role).
+
+mnaio_deployment:
+  deployer:
+    count: 1
+    flavor:
+      cpu: 4
+      ram: 4096
+      disk: 20
+    image_uuid: ""
+    flavor_uuid: ""
+    config_drive: false
+    boot_from_volume: false
+  controller:
+    count: 3
+    flavor:
+      cpu: 8
+      ram: 24576
+      disk: 20
+    image_uuid: ""
+    flavor_uuid: ""
+    config_drive: false
+    boot_from_volume: false
+  compute:
+    count: 3
+    flavor:
+      cpu: 8
+      ram: 16384
+      disk: 40
+    image_uuid: ""
+    flavor_uuid: ""
+    config_drive: false
+    boot_from_volume: false
+  loadbalancer:
+    count: 2
+    flavor:
+      cpu: 4
+      ram: 4096
+      disk: 20
+    image_uuid: ""
+    flavor_uuid: ""
+    config_drive: false
+    boot_from_volume: false
+  ceph:
+    count: 2
+    flavor:
+      cpu: 4
+      ram: 8192
+      disk: 20
+    osd_size: 10
+    image_uuid: ""
+    flavor_uuid: ""
+    config_drive: false
+    boot_from_volume: false
+
+############################
+#### Keepalived/HAproxy ####
+############################
+
+internal_lb_vip_address: 172.29.236.10
+external_lb_vip_address: 10.240.0.10
+
+####################
+#### Networking ####
+####################
+
+network_management_cidr: 10.240.0.0/22
+network_container_cidr: 172.29.236.0/22
+network_overlay_cidr: 172.29.240.0/22
+network_storage_cidr: 172.29.244.0/22
+network_replication_cidr: 172.29.252.0/22
+network_provider_cidr: 10.239.0.0/22

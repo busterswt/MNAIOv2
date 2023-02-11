@@ -2,35 +2,35 @@
 
 resource "openstack_compute_flavor_v2" "osa-mnaio-controller-flavor" {
   name  = "${join("-",["${random_pet.pet_name.id}","osa-mnaio-controller"])}"
-  ram   = "{{ mnaio_deployment['controller'].ram }}"
-  vcpus = "{{ mnaio_deployment['controller'].cpu }}"
-  disk  = "{{ mnaio_deployment['controller'].disk }}"
+  ram   = "{{ mnaio_deployment['controller'].flavor.ram }}"
+  vcpus = "{{ mnaio_deployment['controller'].flavor.cpu }}"
+  disk  = "{{ mnaio_deployment['controller'].flavor.disk }}"
 }
 
 resource "openstack_compute_flavor_v2" "osa-mnaio-compute-flavor" {
   name  = "${join("-",["${random_pet.pet_name.id}","osa-mnaio-compute"])}"
-  ram   = "{{ mnaio_deployment['compute'].ram }}"
-  vcpus = "{{ mnaio_deployment['compute'].cpu }}"
-  disk  = "{{ mnaio_deployment['compute'].disk }}"
+  ram   = "{{ mnaio_deployment['compute'].flavor.ram }}"
+  vcpus = "{{ mnaio_deployment['compute'].flavor.cpu }}"
+  disk  = "{{ mnaio_deployment['compute'].flavor.disk }}"
 }
 
 resource "openstack_compute_flavor_v2" "osa-mnaio-loadbalancer-flavor" {
   name  = "${join("-",["${random_pet.pet_name.id}","osa-mnaio-lb"])}"
-  ram   = "{{ mnaio_deployment['loadbalancer'].ram }}"
-  vcpus = "{{ mnaio_deployment['loadbalancer'].cpu }}"
-  disk  = "{{ mnaio_deployment['loadbalancer'].disk }}"
+  ram   = "{{ mnaio_deployment['loadbalancer'].flavor.ram }}"
+  vcpus = "{{ mnaio_deployment['loadbalancer'].flavor.cpu }}"
+  disk  = "{{ mnaio_deployment['loadbalancer'].flavor.disk }}"
 }
 
 resource "openstack_compute_flavor_v2" "osa-mnaio-deployer-flavor" {
   name  = "${join("-",["${random_pet.pet_name.id}","osa-mnaio-deploy"])}"
-  ram   = "{{ mnaio_deployment['deployer'].ram }}"
-  vcpus = "{{ mnaio_deployment['deployer'].cpu }}"
-  disk  = "{{ mnaio_deployment['deployer'].disk }}"
+  ram   = "{{ mnaio_deployment['deployer'].flavor.ram }}"
+  vcpus = "{{ mnaio_deployment['deployer'].flavor.cpu }}"
+  disk  = "{{ mnaio_deployment['deployer'].flavor.disk }}"
 }
 
 resource "openstack_compute_flavor_v2" "osa-mnaio-ceph-flavor" {
   name  = "${join("-",["${random_pet.pet_name.id}","osa-mnaio-ceph"])}"
-  ram   = "{{ mnaio_deployment['ceph'].ram }}"
-  vcpus = "{{ mnaio_deployment['ceph'].cpu }}"
-  disk  = "{{ mnaio_deployment['ceph'].disk }}"
+  ram   = "{{ mnaio_deployment['ceph'].flavor.ram }}"
+  vcpus = "{{ mnaio_deployment['ceph'].flavor.cpu }}"
+  disk  = "{{ mnaio_deployment['ceph'].flavor.disk }}"
 }

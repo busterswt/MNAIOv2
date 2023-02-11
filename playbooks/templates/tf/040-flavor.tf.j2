@@ -2,35 +2,35 @@
 
 resource "openstack_compute_flavor_v2" "osa-mnaio-controller-flavor" {
   name  = "${join("-",["${random_pet.pet_name.id}","osa-mnaio-controller"])}"
-  ram   = "{{ mnaio_flavors['controller'].ram }}"
-  vcpus = "{{ mnaio_flavors['controller'].cpu }}"
-  disk  = "{{ mnaio_flavors['controller'].disk }}"
+  ram   = "{{ mnaio_deployment['controller'].ram }}"
+  vcpus = "{{ mnaio_deployment['controller'].cpu }}"
+  disk  = "{{ mnaio_deployment['controller'].disk }}"
 }
 
 resource "openstack_compute_flavor_v2" "osa-mnaio-compute-flavor" {
   name  = "${join("-",["${random_pet.pet_name.id}","osa-mnaio-compute"])}"
-  ram   = "{{ mnaio_flavors['compute'].ram }}"
-  vcpus = "{{ mnaio_flavors['compute'].cpu }}"
-  disk  = "{{ mnaio_flavors['compute'].disk }}"
+  ram   = "{{ mnaio_deployment['compute'].ram }}"
+  vcpus = "{{ mnaio_deployment['compute'].cpu }}"
+  disk  = "{{ mnaio_deployment['compute'].disk }}"
 }
 
 resource "openstack_compute_flavor_v2" "osa-mnaio-loadbalancer-flavor" {
   name  = "${join("-",["${random_pet.pet_name.id}","osa-mnaio-lb"])}"
-  ram   = "{{ mnaio_flavors['loadbalancer'].ram }}"
-  vcpus = "{{ mnaio_flavors['loadbalancer'].cpu }}"
-  disk  = "{{ mnaio_flavors['loadbalancer'].disk }}"
+  ram   = "{{ mnaio_deployment['loadbalancer'].ram }}"
+  vcpus = "{{ mnaio_deployment['loadbalancer'].cpu }}"
+  disk  = "{{ mnaio_deployment['loadbalancer'].disk }}"
 }
 
 resource "openstack_compute_flavor_v2" "osa-mnaio-deployer-flavor" {
   name  = "${join("-",["${random_pet.pet_name.id}","osa-mnaio-deploy"])}"
-  ram   = "{{ mnaio_flavors['deployer'].ram }}"
-  vcpus = "{{ mnaio_flavors['deployer'].cpu }}"
-  disk  = "{{ mnaio_flavors['deployer'].disk }}"
+  ram   = "{{ mnaio_deployment['deployer'].ram }}"
+  vcpus = "{{ mnaio_deployment['deployer'].cpu }}"
+  disk  = "{{ mnaio_deployment['deployer'].disk }}"
 }
 
 resource "openstack_compute_flavor_v2" "osa-mnaio-ceph-flavor" {
   name  = "${join("-",["${random_pet.pet_name.id}","osa-mnaio-ceph"])}"
-  ram   = "{{ mnaio_flavors['ceph'].ram }}"
-  vcpus = "{{ mnaio_flavors['ceph'].cpu }}"
-  disk  = "{{ mnaio_flavors['ceph'].disk }}"
+  ram   = "{{ mnaio_deployment['ceph'].ram }}"
+  vcpus = "{{ mnaio_deployment['ceph'].cpu }}"
+  disk  = "{{ mnaio_deployment['ceph'].disk }}"
 }

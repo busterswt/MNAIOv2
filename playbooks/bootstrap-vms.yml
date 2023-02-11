@@ -28,7 +28,7 @@
         - src: "{{ playbook_dir }}/../id_rsa_mnaio.key"
           dest: /root/.ssh/id_rsa
       register: copied
-      retries: 3
+      retries: 6
       delay: 10
       until: not copied.failed
 

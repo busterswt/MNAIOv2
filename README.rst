@@ -56,34 +56,11 @@ Prerequisites
 - Terraform (>=1.3.6)
 
 From within the MNAIOv2 directory, install Ansible and required collections
-with the following commands:
+and terraform with the following command:
 
 .. code-block:: bash
 
-    Ubuntu 20.04 LTS
-    ----------------
-    sudo apt install python3-pip
-    sudo pip3 install ansible-core==2.13.5
-    ansible-galaxy collection install -r requirements.yml
-
-    MacOS X (Homebrew)
-    ------------------
-    brew install ansible
-    ansible-galaxy collection install -r requirements.yml
-
-Install Terraform:
-
-.. code-block:: bash
-
-    Ubuntu 20.04 LTS
-    ----------------
-    curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
-    sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
-    sudo apt-get update && sudo apt-get install terraform=1.3.6
-
-    MacOS X (Homebrew)
-    ------------------
-    brew install terraform
+    scripts/bootstrap.sh
 
 Overrides
 ---------
@@ -207,7 +184,8 @@ To SSH to the deploy node, use the private key. Attach to the existing tmux sess
 
 .. code-block:: bash
 
-    jdenton@MBP-M1 % ssh -i id_rsa_mnaio.key ubuntu@192.168.2.183
+    % ssh -i id_rsa_mnaio.key ubuntu@192.168.2.183
+
     Welcome to Ubuntu 20.04.5 LTS (GNU/Linux 5.4.0-135-generic x86_64)
     
     * Documentation:  https://help.ubuntu.com

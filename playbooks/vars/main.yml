@@ -66,3 +66,4 @@ default_container_tech: lxc
 osa_enable_infra: True
 osa_enable_compute: True
 osa_enable_ceph: False
+tf_state_file: "{{ lookup('env', 'MNAIO_TF_STATE_FILE') }}"

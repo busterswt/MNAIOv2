@@ -32,5 +32,6 @@
     community.general.terraform:
       project_path: "{{ playbook_dir }}/../terraform"
       state: present
+      state_file: "{{ tf_state_file }}"
       variables:
         external_network: "{{ _external_network | to_json }}"

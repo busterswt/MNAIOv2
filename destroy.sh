@@ -18,11 +18,10 @@ set -u
 source ansible-env.rc
 
 # Destroy the Terraform environment
-
 pushd terraform
-TF_VAR_image=dummy \
-TF_VAR_external_network='{"name":"dummy","uuid":"dummy"}' \
-terraform destroy
+  TF_VAR_image=dummy \
+  TF_VAR_external_network='{"name":"dummy","uuid":"dummy"}' \
+  terraform destroy -state=${MNAIO_TF_STATE_FILE}
 popd
 
 ###############

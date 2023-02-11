@@ -29,6 +29,9 @@
         mode: "0644"
       with_items:
         - { src: 'tf/000-variables.tf.j2', dest: '000-variables.tf' }
+        - { src: 'tf/010-sshkey.tf.j2', dest: '010-sshkey.tf' }
+        - { src: 'tf/020-network.tf.j2', dest: '020-network.tf.tf' }
+        - { src: 'tf/030-security_group.tf.j2', dest: '030-security_group.tf.tf' }
         - { src: 'tf/040-flavor.tf.j2', dest: '040-flavor.tf' }
         - { src: 'tf/060-instance_controller.tf.j2', dest: '060-instance_controller.tf' }
         - { src: 'tf/061-instance_compute.tf.j2', dest: '061-instance_compute.tf' }
@@ -38,3 +41,4 @@
         - { src: 'tf/100-inventory.tf.j2', dest: '100-inventory.tf' }
         - { src: 'tf/100-inventory.tf.j2', dest: '100-inventory.tf' }
         - { src: 'tf/101-ansible-vars.tf.j2', dest: '101-ansible-vars.tf' }
+        - { src: 'tf/105-private-key.tf.j2', dest: '105-private-key.tf.tf' }

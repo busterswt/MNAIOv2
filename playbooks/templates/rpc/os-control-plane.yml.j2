@@ -5,7 +5,7 @@
 haproxy_hosts: &infra_hosts
 {% for host in groups['loadbalancer_hosts'] %}
   {{ hostvars[host]['inventory_hostname'] }}:
-    ip: {{ hostvars[host].fixed_ip }}
+    ip: {{ hostvars[host].container_ip }}
     no_containers: true
 {% endfor %}
 
@@ -20,7 +20,7 @@ haproxy_hosts: &infra_hosts
 controller_hosts: &controller_hosts
 {% for host in groups['controller_hosts'] %}
   {{ hostvars[host]['inventory_hostname'] }}:
-    ip: {{ hostvars[host]['fixed_ip'] }}
+    ip: {{ hostvars[host]['container_ip'] }}
     no_containers: true
     container_vars:
       nova_virt_type: ironic

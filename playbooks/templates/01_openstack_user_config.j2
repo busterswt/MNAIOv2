@@ -77,7 +77,7 @@ global_overrides:
 compute_block: &compute_block
 {%   for host in groups['compute_hosts'] %}
   {{ hostvars[host]['inventory_hostname'] }}:
-    ip: {{ hostvars[host]['fixed_ip'] }}
+    ip: {{ hostvars[host]['container_ip'] }}
     container_vars:
       container_tech: "{{ default_container_tech }}"
 {%   endfor %}
@@ -87,7 +87,7 @@ compute_block: &compute_block
 controller_block: &controller_block
 {% for host in groups['controller_hosts'] %}
   {{ hostvars[host]['inventory_hostname'] }}:
-    ip: {{ hostvars[host]['fixed_ip'] }}
+    ip: {{ hostvars[host]['container_ip'] }}
     container_vars:
       container_tech: "{{ default_container_tech }}"
 {% endfor %}
@@ -96,7 +96,7 @@ controller_block: &controller_block
 loadbalancer_block: &loadbalancer_block
 {% for host in groups['loadbalancer_hosts'] %}
   {{ hostvars[host]['inventory_hostname'] }}:
-    ip: {{ hostvars[host]['fixed_ip'] }}
+    ip: {{ hostvars[host]['container_ip'] }}
     container_vars:
       container_tech: "{{ default_container_tech }}"
 {% endfor %}

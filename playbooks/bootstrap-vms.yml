@@ -38,7 +38,7 @@
         marker: "# {mark} ANSIBLE GENERATED HOSTS"
         block: |
             {% for host in groups['all'] %}
-            {{ hostvars[host]['fixed_ip'] }} {{ hostvars[host]['long_hostname'] }}
+            {{ hostvars[host]['container_ip'] }} {{ hostvars[host]['long_hostname'] }}
             {% endfor %}
 
 - name: Set MaxSessions and MaxStartups to reduce connection failures

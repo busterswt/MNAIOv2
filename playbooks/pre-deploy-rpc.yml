@@ -22,6 +22,7 @@
   - defaults/main.yml
   - vars/main.yml
   - vars/terraform.yml
+  - vars/rpc.yml
   tags:
     - deploy-osa
   tasks:
@@ -51,10 +52,10 @@
     - name: Finished notice
       debug:
         msg: |
-          RPC openstack-ops repo has been downloaded. To proceed, login to the deploy host ({{ groups['deploy_hosts'][0] }})
-          at {{ ansible_ssh_host }} and run the the following command(s):
+          RPC openstack-ops repo has been downloaded. To proceed, login to the {{ groups['deploy_hosts'][0] }} VM
+          (ssh -i id_rsa_mnaio.key ubuntu@{{ ansible_ssh_host }}) and run the the following command(s):
 
-          cd /opt/openstack-ops; SKIP_PROMPTS=true OSA_ENV=lab1 OSA_ENV_LCASE=lab1 OSA_RELEASE=23.4.4 OSA_RUN_PLAY=false RPCO_CONFIG_BRANCH=master scripts/deploy-rpco.sh
+          cd /opt/openstack-ops; SKIP_PROMPTS={{ rpco_skip_prompts }}  OSA_ENV={{ rpco_osa_env }} OSA_ENV_LCASE={{ rpco_osa_env }} OSA_RELEASE={{ rpco_osa_release }} OSA_RUN_PLAY={{ rpco_run_play }} RPCO_CONFIG_BRANCH={{ rpco_config_branch }} scripts/deploy-rpco.sh
 
           Once complete, come back and run the "setup-rpc.sh" bash script from the MNAIOv2 directory.
       when:

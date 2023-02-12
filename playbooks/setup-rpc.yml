@@ -160,7 +160,8 @@
     - name: Finished notice
       debug:
         msg: |
-          RPC deploy running. To check on the state of this deployment, login
-          to the {{ groups['deploy_hosts'][0] }} VM ({{ ansible_ssh_host }}) and attach to the "build-osa" tmux session.
+          RPC-O deploy running. To check on the state of this deployment, login
+          to the {{ groups['deploy_hosts'][0] }} VM (ssh -i id_rsa_mnaio.key ubuntu@{{ ansible_ssh_host }}) and attach
+          to the "build-osa" tmux session.
       when:
         - run_osa | default(true) | bool

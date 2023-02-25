@@ -52,7 +52,7 @@ mnaio_deployment:
     config_drive: false
     boot_from_volume: false
   ceph:
-    count: 2
+    count: 3
     flavor:
       cpu: 4
       ram: 8192

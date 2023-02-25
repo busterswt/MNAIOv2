@@ -1,0 +1,7 @@
+---
+#### RPC Specific Vars  ####
+rpco_osa_release: 23.4.4
+rpco_skip_prompts: true
+rpco_osa_env: lab1
+rpco_run_play: false
+rpco_config_branch: master

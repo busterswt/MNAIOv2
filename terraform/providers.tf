@@ -29,6 +29,9 @@ required_version = ">= 0.14.0"
     macaddress = {
       source = "ivoronin/macaddress"
     }
+    local = {
+      source = "hashicorp/local"
+    }
   }
 }
 

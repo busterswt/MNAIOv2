@@ -45,8 +45,8 @@
       with_items:
         - "{{ playbook_dir }}/../terraform/000-variables.tf"
         - "{{ playbook_dir }}/../terraform/010-sshkey.tf"
-        - "{{ playbook_dir }}/../terraform/020-network.tf.tf"
-        - "{{ playbook_dir }}/../terraform/030-security_group.tf.tf"
+        - "{{ playbook_dir }}/../terraform/020-network.tf"
+        - "{{ playbook_dir }}/../terraform/030-security_group.tf"
         - "{{ playbook_dir }}/../terraform/040-flavor.tf"
         - "{{ playbook_dir }}/../terraform/050-image.tf"
         - "{{ playbook_dir }}/../terraform/060-instance_controller.tf"
@@ -56,5 +56,5 @@
         - "{{ playbook_dir }}/../terraform/064-instance_ceph.tf"
         - "{{ playbook_dir }}/../terraform/100-inventory.tf"
         - "{{ playbook_dir }}/../terraform/101-ansible-vars.tf"
-        - "{{ playbook_dir }}/../terraform/105-private-key.tf.tf"
+        - "{{ playbook_dir }}/../terraform/105-private-key.tf"
       when: tf_resources | length <= 0

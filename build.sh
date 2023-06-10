@@ -50,7 +50,8 @@ ansible-playbook playbooks/download-images.yml \
 
 # This playbook generates Terraform files based on scenario
 ansible-playbook playbooks/create-terraform.yml \
-   -e osa_vm_image=${MNAIO_OSA_VM_IMAGE:-"focal"}
+   -e osa_vm_image=${MNAIO_OSA_VM_IMAGE:-"focal"} \
+   --extra-vars "@overrides.yml"
 
 # This playbook deploys VMs onto an existing OpenStack cloud using Terraform
 # We run it twice due to missing inventory the first time

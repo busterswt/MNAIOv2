@@ -21,6 +21,12 @@ resource "openstack_networking_router_v2" "mnaio-overcloud-router" {
 
 resource "openstack_networking_network_v2" "mnaio-management" {
   name = "${join("-",["${random_pet.pet_name.id}","mnaio-management"])}"
+{% if 'vlan' in neutron_tenant_network %}
+  segments {
+    physical_network = "{{ neutron_physical_network }}"
+    network_type     = "{{ neutron_network_type }}"
+  }
+{% endif %}
 }
 
 resource "openstack_networking_subnet_v2" "mnaio-management" {
@@ -41,6 +47,12 @@ resource "openstack_networking_router_interface_v2" "router-interface-mgmt" {
 
 resource "openstack_networking_network_v2" "mnaio-container" {
   name = "${join("-",["${random_pet.pet_name.id}","mnaio-container"])}"
+{% if 'vlan' in neutron_tenant_network %}
+  segments {
+    physical_network = "{{ neutron_physical_network }}"
+    network_type     = "{{ neutron_network_type }}"
+  }
+{% endif %}
 }
 
 resource "openstack_networking_subnet_v2" "mnaio-container" {
@@ -57,6 +69,12 @@ resource "openstack_networking_subnet_v2" "mnaio-container" {
 
 resource "openstack_networking_network_v2" "mnaio-overlay" {
   name = "${join("-",["${random_pet.pet_name.id}","mnaio-overlay"])}"
+{% if 'vlan' in neutron_tenant_network %}
+  segments {
+    physical_network = "{{ neutron_physical_network }}"
+    network_type     = "{{ neutron_network_type }}"
+  }
+{% endif %}
 }
 
 resource "openstack_networking_subnet_v2" "mnaio-overlay" {
@@ -73,6 +91,12 @@ resource "openstack_networking_subnet_v2" "mnaio-overlay" {
 
 resource "openstack_networking_network_v2" "mnaio-storage" {
   name = "${join("-",["${random_pet.pet_name.id}","mnaio-storage"])}"
+{% if 'vlan' in neutron_tenant_network %}
+  segments {
+    physical_network = "{{ neutron_physical_network }}"
+    network_type     = "{{ neutron_network_type }}"
+  }
+{% endif %}
 }
 
 resource "openstack_networking_subnet_v2" "mnaio-storage" {
@@ -89,6 +113,12 @@ resource "openstack_networking_subnet_v2" "mnaio-storage" {
 
 resource "openstack_networking_network_v2" "mnaio-replication" {
   name = "${join("-",["${random_pet.pet_name.id}","mnaio-replication"])}"
+{% if 'vlan' in neutron_tenant_network %}
+  segments {
+    physical_network = "{{ neutron_physical_network }}"
+    network_type     = "{{ neutron_network_type }}"
+  }
+{% endif %}
 }
 
 resource "openstack_networking_subnet_v2" "mnaio-replication" {
@@ -113,6 +143,12 @@ resource "openstack_networking_subnet_v2" "mnaio-replication" {
 resource "openstack_networking_network_v2" "mnaio-provider-ext" {
   name = "${join("-",["${random_pet.pet_name.id}","mnaio-provider-ext"])}"
   external = true
+{% if 'vlan' in neutron_tenant_network %}
+  segments {
+    physical_network = "{{ neutron_physical_network }}"
+    network_type     = "{{ neutron_network_type }}"
+  }
+{% endif %}
 }
 
 resource "openstack_networking_subnet_v2" "mnaio-provider-ext" {

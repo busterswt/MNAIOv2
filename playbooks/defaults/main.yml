@@ -80,3 +80,7 @@ network_overlay_cidr: 172.29.240.0/22
 network_storage_cidr: 172.29.244.0/22
 network_replication_cidr: 172.29.252.0/22
 network_provider_cidr: 10.239.0.0/22
+
+neutron_physical_network: physnet1
+neutron_network_type: vlan
+neutron_tenant_network: geneve

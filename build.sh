@@ -31,6 +31,8 @@ then
     exit 1
 fi
 
+export MNAIO_TF_STATE_FILE=${MNAIO_TF_STATE_FILE:-"terraform.tfstate"}
+
 # DO NOT MODIFY #
 export TF_VAR_image=${MNAIO_OSA_VM_IMAGE:-"focal"}
 export MNAIO_DEPLOY=${MNAIO_DEPLOY:-"osa"}
@@ -41,10 +43,10 @@ export MNAIO_OSA_VM_IMAGE_UUID=${MNAIO_OSA_VM_IMAGE_UUID:-""}
 ###################
 
 pushd terraform
-terraform init
+    terraform init
 popd
 
-# This playbook downloads images to the local machine for later uploading to Glance
+# This playbook downloads images to the local machine for later upload into glance
 ansible-playbook playbooks/download-images.yml \
    -e osa_vm_image=${MNAIO_OSA_VM_IMAGE:-"focal"}
 

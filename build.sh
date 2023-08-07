@@ -35,16 +35,17 @@ fi
 export TF_VAR_image=${MNAIO_OSA_VM_IMAGE:-"jammy"}
 export MNAIO_DEPLOY=${MNAIO_DEPLOY:-"osa"}
 export MNAIO_OSA_VM_IMAGE_UUID=${MNAIO_OSA_VM_IMAGE_UUID:-""}
+export MNAIO_TF_STATE_FILE=${MNAIO_TF_STATE_FILE:-"terraform.tfstate"}
 
 ###################
 #### THE GOODS ####
 ###################
 
 pushd terraform
-terraform init
+    terraform init
 popd
 
-# This playbook downloads images to the local machine for later uploading to Glance
+# This playbook downloads images to the local machine for later upload into Glance
 ansible-playbook playbooks/download-images.yml \
    -e osa_vm_image=${MNAIO_OSA_VM_IMAGE:-"jammy"}
 

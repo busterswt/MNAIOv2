@@ -1,4 +1,4 @@
 ---
 neutron_physical_network: vlan
 neutron_network_type: vlan
-neutron_tenant_network: vlan
+neutron_tenant_network: geneve

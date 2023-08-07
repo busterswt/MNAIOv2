@@ -3,7 +3,7 @@
 osa_branch: master
 osa_no_containers: True
 osa_apply_security_hardening: false
-osa_vm_image: focal
+osa_vm_image: jammy
 
 #### Images ####
 images:

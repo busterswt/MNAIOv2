@@ -47,7 +47,7 @@ the undercloud OpenStack APIs and the deployed instances (via Floating IPs).
 
 .. code-block:: bash
 
-    git clone https://github.com/busterswt/mnaiov2/
+    git clone https://github.com/busterswt/MNAIOv2/
 
 Prerequisites
 -------------
@@ -64,12 +64,12 @@ with the following commands:
     ----------------
     sudo apt install python3-pip
     sudo pip3 install ansible-core==2.13.5
-    ansible-galaxy collection install -r requirements.yml
+    ansible-galaxy collection install -r ansible-collection-requirements.yml
 
     MacOS X (Homebrew)
     ------------------
     brew install ansible
-    ansible-galaxy collection install -r requirements.yml
+    ansible-galaxy collection install -r ansible-collection-requirements.yml
 
 Install Terraform:
 
@@ -91,7 +91,7 @@ Overrides
 By default, MNAIOv2 will deploy an OpenStack cloud with the following
 attributes:
 
-- Ubuntu Focal 20.04 LTS
+- Ubuntu Focal 22.04 LTS
 - OpenStack-Ansible (`master` branch)
 - Neutron ML2/OVS
 
@@ -207,7 +207,7 @@ To SSH to the deploy node, use the private key. Attach to the existing tmux sess
 
 .. code-block:: bash
 
-    jdenton@MBP-M1 % ssh -i id_rsa_mnaio.key ubuntu@192.168.2.183
+    % ssh -i id_rsa_mnaio.key ubuntu@192.168.2.183
     Welcome to Ubuntu 20.04.5 LTS (GNU/Linux 5.4.0-135-generic x86_64)
     
     * Documentation:  https://help.ubuntu.com

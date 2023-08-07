@@ -32,7 +32,7 @@ then
 fi
 
 # DO NOT MODIFY #
-export TF_VAR_image=${MNAIO_OSA_VM_IMAGE:-"focal"}
+export TF_VAR_image=${MNAIO_OSA_VM_IMAGE:-"jammy"}
 export MNAIO_DEPLOY=${MNAIO_DEPLOY:-"osa"}
 export MNAIO_OSA_VM_IMAGE_UUID=${MNAIO_OSA_VM_IMAGE_UUID:-""}
 
@@ -46,19 +46,19 @@ popd
 
 # This playbook downloads images to the local machine for later uploading to Glance
 ansible-playbook playbooks/download-images.yml \
-   -e osa_vm_image=${MNAIO_OSA_VM_IMAGE:-"focal"}
+   -e osa_vm_image=${MNAIO_OSA_VM_IMAGE:-"jammy"}
 
 # This playbook generates Terraform files based on scenario
 ansible-playbook playbooks/create-terraform.yml \
-   -e osa_vm_image=${MNAIO_OSA_VM_IMAGE:-"focal"} \
+   -e osa_vm_image=${MNAIO_OSA_VM_IMAGE:-"jammy"} \
    --extra-vars "@overrides.yml"
 
 # This playbook deploys VMs onto an existing OpenStack cloud using Terraform
 # We run it twice due to missing inventory the first time
 ansible-playbook playbooks/deploy-vms.yml \
-   -e osa_vm_image=${MNAIO_OSA_VM_IMAGE:-"focal"}
+   -e osa_vm_image=${MNAIO_OSA_VM_IMAGE:-"jammy"}
 ansible-playbook -i playbooks/inventory/hosts playbooks/deploy-vms.yml \
-   -e osa_vm_image=${MNAIO_OSA_VM_IMAGE:-"focal"}
+   -e osa_vm_image=${MNAIO_OSA_VM_IMAGE:-"jammy"}
 
 # This playbook bootstraps the VMs (networking, keys, etc)
 ansible-playbook -i playbooks/inventory/hosts playbooks/bootstrap-vms.yml

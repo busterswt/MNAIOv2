@@ -146,7 +146,7 @@ Set the Neutron plugin (options: ml2.ovs,ml2.ovn)
   ``export MNAIO_OSA_NEUTRON_PLUGIN="${MNAIO_OSA_NEUTRON_PLUGIN:-ml2.ovs}"``
 
 Set the instance image type for automatic download (options: focal,jammy)
-  ``export MNAIO_OSA_VM_IMAGE="${MNAIO_OSA_VM_IMAGE:-focal}"``
+  ``export MNAIO_OSA_VM_IMAGE="${MNAIO_OSA_VM_IMAGE:-jammy}"``
 
 Set the deployment to metal versus containers
   ``export MNAIO_OSA_NO_CONTAINERS="${MNAIO_OSA_NO_CONTAINERS:-true}"``

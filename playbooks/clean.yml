@@ -25,7 +25,7 @@
     - vars/main.yml
   tasks:
     - name: Read Terraform state file
-      ansible.builtin.shell: "cat {{ playbook_dir }}/../terraform/{{ tf_state_file }}"
+      ansible.builtin.shell: "cat {{ playbook_dir }}/../terraform/terraform.tfstate"
       register: result
 
     - name: Save JSON data to variable
